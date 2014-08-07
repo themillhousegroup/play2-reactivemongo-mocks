@@ -2,28 +2,18 @@ package com.themillhousegroup.reactivemongo.mocks
 
 // Reactive Mongo imports
 
-import _root_.play.api.libs.json.JsObject
-import _root_.play.api.libs.json.JsValue
-import _root_.play.api.libs.json.Reads
-import _root_.play.api.libs.json.Writes
-import _root_.play.modules.reactivemongo.json.collection.JSONCollection
-import _root_.play.modules.reactivemongo.json.collection.JSONQueryBuilder
-import _root_.reactivemongo.api.CollectionProducer
-import _root_.reactivemongo.api.collections.GenericQueryBuilder
-import _root_.reactivemongo.api.DefaultDB
-import _root_.reactivemongo.api.FailoverStrategy
-import _root_.reactivemongo.core.commands.LastError
-import org.specs2.mock.Mockito
-import reactivemongo.api._
+import reactivemongo.api.CollectionProducer
 import reactivemongo.api.collections.GenericQueryBuilder
+import reactivemongo.api.DefaultDB
+import reactivemongo.api.FailoverStrategy
 
-// Reactive Mongo plugin
+//// Reactive Mongo plugin
 import play.modules.reactivemongo._
 import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
-
+//
 import org.specs2.mock.Mockito
-import play.api.test._
-import play.api.test.Helpers._
+//import play.api.test._
+//import play.api.test.Helpers._
 import play.api.libs.json._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
