@@ -26,7 +26,9 @@ import reactivemongo.core.commands.{LastError, GetLastError}
 trait MongoMocks extends Mockito {
   this: org.specs2.mutable.Specification =>
 
+  lazy val mockDatabaseName = "mockDB"
   val mockDB = mock[DefaultDB]
+  mockDB.name returns mockDatabaseName
 
   /** Returns a mocked JSONCollection that can be used with the givenMongo... methods in MongoMocks */
   def mockedCollection(name:String):JSONCollection = {
