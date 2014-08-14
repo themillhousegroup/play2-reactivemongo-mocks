@@ -12,6 +12,7 @@ crossScalaVersions := Seq("2.11.1", "2.10.4")
 organization := "com.themillhousegroup"
 
 libraryDependencies ++= Seq(
+    "org.clapper"           %% "grizzled-slf4j"         % "1.0.2",
     "org.mockito"           %   "mockito-all"           % "1.9.0",
     "org.reactivemongo"     %%  "play2-reactivemongo"   % targetPlayReactiveMongoVersion,
     "com.typesafe.play"     %% "play"                   % "2.3.0"       % "provided",
@@ -23,5 +24,7 @@ resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/reposit
 				    "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
 
 jacoco.settings
+
+seq(bintrayResolverSettings:_*)
 
 

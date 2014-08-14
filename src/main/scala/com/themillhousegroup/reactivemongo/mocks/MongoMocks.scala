@@ -33,7 +33,11 @@ trait MongoMocks extends Mockito {
   /** Returns a mocked JSONCollection that can be used with the givenMongo... methods in MongoMocks */
   def mockedCollection(name:String):JSONCollection = {
     val mockCollection = mock[JSONCollection]
-    mockDB.collection[JSONCollection](org.mockito.Matchers.eq(name), any[FailoverStrategy])(any[CollectionProducer[JSONCollection]]) returns mockCollection
+    mockDB
+      .collection[JSONCollection](
+        org.mockito.Matchers.eq(name),
+        any[FailoverStrategy])(
+        any[CollectionProducer[JSONCollection]]) returns mockCollection
     mockCollection
   }
 
