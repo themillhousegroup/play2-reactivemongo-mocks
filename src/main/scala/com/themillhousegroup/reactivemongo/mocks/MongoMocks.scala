@@ -47,22 +47,32 @@ trait MongoMocks extends Mockito with Logging {
   }
 
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
-  private def givenMongoCollectionFindReturns(targetCollection:JSONCollection, result:Option[JsValue]) = {
+  protected def givenMongoCollectionFindReturns(targetCollection:JSONCollection,
+                                              findMatcher: =>JsObject,
+                                              result:Option[JsValue]):JSONCollection = {
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
     org.mockito.Mockito.doReturn(Future.successful (result)).when(spiedQB).one[JsObject]
-    spiedQB.sort(any[JsObject]) answers { _ =>
+    spiedQB.sort(findMatcher) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $result to sort request")
       spiedQB
     }
-    targetCollection.find(any[JsObject])(any[Writes[JsObject]]) answers { _ =>
+    targetCollection.find(findMatcher)(any[Writes[JsObject]]) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $result to find request")
       spiedQB
     }
+    targetCollection
   }
 
-  def givenMongoFindReturnsNothing(targetCollection:JSONCollection) = givenMongoCollectionFindReturns(targetCollection, None)
-  def givenMongoFindReturnsSome(targetCollection:JSONCollection, result:JsValue) = givenMongoCollectionFindReturns(targetCollection, Some(result))
-  def givenMongoFindReturns(targetCollection:JSONCollection, optResult:Option[JsValue]) = givenMongoCollectionFindReturns(targetCollection, optResult)
+  protected def givenMongoCollectionFindAnyReturns(targetCollection:JSONCollection,
+                                              result:Option[JsValue]):JSONCollection =
+        givenMongoCollectionFindReturns(targetCollection, any[JsObject], result)
+
+  def givenMongoFindReturnsNothing(targetCollection:JSONCollection) =
+        givenMongoCollectionFindAnyReturns(targetCollection, None)
+  def givenMongoFindReturnsSome(targetCollection:JSONCollection, result:JsValue) =
+        givenMongoCollectionFindAnyReturns(targetCollection, Some(result))
+  def givenMongoFindReturns(targetCollection:JSONCollection, optResult:Option[JsValue]) =
+        givenMongoCollectionFindAnyReturns(targetCollection, optResult)
 
 
   def givenMongoInsertIsOK(targetCollection:JSONCollection, ok:Boolean) = {
