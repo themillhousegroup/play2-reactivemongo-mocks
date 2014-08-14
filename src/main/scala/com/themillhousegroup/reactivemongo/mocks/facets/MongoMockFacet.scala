@@ -1,5 +1,7 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-trait MongoMockFacet {
+import org.specs2.mock.Mockito
+
+trait MongoMockFacet extends Mockito with Logging {
 
 }
