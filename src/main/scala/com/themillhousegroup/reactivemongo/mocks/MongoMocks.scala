@@ -29,7 +29,7 @@ trait MongoMocks extends Mockito with Logging {
 
   lazy val mockDatabaseName = "mockDB"
   val mockDB = mock[DefaultDB]
-  mockDB.name returns {
+  mockDB.name answers { _ =>
     logger.debug(s"Returning mocked $mockDatabaseName DB")
     mockDatabaseName
   }
@@ -41,7 +41,7 @@ trait MongoMocks extends Mockito with Logging {
       .collection[JSONCollection](
         org.mockito.Matchers.eq(name),
         any[FailoverStrategy])(
-        any[CollectionProducer[JSONCollection]]) returns {
+        any[CollectionProducer[JSONCollection]]) answers { _ =>
           logger.debug(s"Returning mocked $name collection")
           mockCollection
         }
@@ -52,8 +52,14 @@ trait MongoMocks extends Mockito with Logging {
   private def givenMongoCollectionFindReturns(targetCollection:JSONCollection, result:Option[JsValue]) = {
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
     org.mockito.Mockito.doReturn(Future.successful (result)).when(spiedQB).one[JsObject]
-    spiedQB.sort(any[JsObject]) returns spiedQB
-    targetCollection.find(any[JsObject])(any[Writes[JsObject]]) returns spiedQB
+    spiedQB.sort(any[JsObject]) answers { _ =>
+      logger.debug(s"Returning queryBuilder that returns $result to sort request")
+      spiedQB
+    }
+    targetCollection.find(any[JsObject])(any[Writes[JsObject]]) answers { _ =>
+      logger.debug(s"Returning queryBuilder that returns $result to find request")
+      spiedQB
+    }
   }
 
   def givenMongoFindReturnsNothing(targetCollection:JSONCollection) = givenMongoCollectionFindReturns(targetCollection, None)

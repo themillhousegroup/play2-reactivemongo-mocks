@@ -13,7 +13,7 @@ class MongoMocksDefaultDBSpec extends Specification {
 
   "The DefaultDB member of the MongoMocks trait" should {
     val testSpec = new Specification with MongoMocks
-    
+
     "Support accessing a mocked DefaultDB" in {
 
       testSpec.mockDB must not beNull
@@ -53,7 +53,7 @@ class MongoMocksDefaultDBSpec extends Specification {
     }
 
     "return a mock if named collection matches" in {
-      testSpec.mockDB.collection("foo", FailoverStrategy()) must not beNull
+      testSpec.mockDB.collection("foo") must not beNull
     }
 
   }
