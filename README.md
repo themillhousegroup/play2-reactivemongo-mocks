@@ -25,6 +25,9 @@ If you are executing complex multi-Collection join-like queries, it may end up b
 #### The ```Map``` Abstraction
 
 ## Credits
-  - Huge respect to the [Play-ReactiveMongo](https://github.com/ReactiveMongo/Play-ReactiveMongo) team for creating such a great infrastructure
+Standing on the shoulders of giants:
+  - [Play-ReactiveMongo](https://github.com/ReactiveMongo/Play-ReactiveMongo) 
+  - [Mockito](https://code.google.com/p/mockito/) 
+  - [Specs2](http://etorreborre.github.io/specs2/)
 
 
