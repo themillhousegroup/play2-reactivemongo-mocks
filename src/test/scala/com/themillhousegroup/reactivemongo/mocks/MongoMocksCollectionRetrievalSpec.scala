@@ -30,7 +30,7 @@ class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoT
   "givenMongoCollectionFindReturns" should {
 
     "be able to mock the find call to return nothing" in new MockedCollectionScope {
-      testSpec.givenMongoFindReturnsNothing(testSpec.coll)
+      testSpec.givenMongoFindAnyReturnsNothing(testSpec.coll)
       val qb = testSpec.coll.find(JsObject(Nil))
       Await.result(qb.one[JsObject], shortWait) must beNone
     }
@@ -38,7 +38,7 @@ class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoT
     "be able to mock the find call to return something" in new MockedCollectionScope {
       val searchedThing = JsString("thing")
 
-      testSpec.givenMongoFindReturnsSome(testSpec.coll, searchedThing)
+      testSpec.givenMongoFindAnyReturnsSome(testSpec.coll, searchedThing)
       val qb = testSpec.coll.find(JsObject(Nil))
       Await.result(qb.one[JsObject], shortWait) must beSome(searchedThing)
     }
@@ -46,7 +46,7 @@ class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoT
     "be able to mock the find call to return an Option" in new MockedCollectionScope {
       val searchedOption = Some(JsString("thing"))
 
-      testSpec.givenMongoFindReturns(testSpec.coll, searchedOption)
+      testSpec.givenMongoFindAnyReturns(testSpec.coll, searchedOption)
       val qb = testSpec.coll.find(JsObject(Nil))
       Await.result(qb.one[JsObject], shortWait) must beEqualTo(searchedOption)
     }
