@@ -6,6 +6,7 @@ import reactivemongo.api.CollectionProducer
 import reactivemongo.api.collections.GenericQueryBuilder
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.FailoverStrategy
+import com.themillhousegroup.reactivemongo.logging.Logging
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo._
@@ -23,12 +24,15 @@ import reactivemongo.core.commands.{LastError, GetLastError}
 /**
  * Still to do:  save, remove, update, uncheckedInsert, uncheckedRemove, uncheckedUpdate
  */
-trait MongoMocks extends Mockito {
+trait MongoMocks extends Mockito with Logging {
   this: org.specs2.mutable.Specification =>
 
   lazy val mockDatabaseName = "mockDB"
   val mockDB = mock[DefaultDB]
-  mockDB.name returns mockDatabaseName
+  mockDB.name returns {
+    logger.debug(s"Returning mocked $mockDatabaseName DB")
+    mockDatabaseName
+  }
 
   /** Returns a mocked JSONCollection that can be used with the givenMongo... methods in MongoMocks */
   def mockedCollection(name:String):JSONCollection = {
@@ -37,7 +41,10 @@ trait MongoMocks extends Mockito {
       .collection[JSONCollection](
         org.mockito.Matchers.eq(name),
         any[FailoverStrategy])(
-        any[CollectionProducer[JSONCollection]]) returns mockCollection
+        any[CollectionProducer[JSONCollection]]) returns {
+          logger.debug(s"Returning mocked $name collection")
+          mockCollection
+        }
     mockCollection
   }
 

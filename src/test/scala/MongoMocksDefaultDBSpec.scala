@@ -9,7 +9,6 @@ import scala.concurrent.duration.Duration
 
 class MongoMocksDefaultDBSpec extends Specification {
 
-  this
   val shortWait = Duration(100L, "millis")
 
   "The DefaultDB member of the MongoMocks trait" should {
