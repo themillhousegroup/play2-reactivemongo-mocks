@@ -1,15 +1,12 @@
 package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
-import reactivemongo.api.FailoverStrategy
-import play.api.libs.json.JsObject
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 
 
-class MongoMocksDefaultDBSpec extends Specification {
+class MongoMocksDefaultDBSpec extends Specification with CommonMongoTests {
 
-  val shortWait = Duration(100L, "millis")
 
   "The DefaultDB member of the MongoMocks trait" should {
     val testSpec = new Specification with MongoMocks
@@ -42,31 +39,5 @@ class MongoMocksDefaultDBSpec extends Specification {
     }
   }
 
-  "The mockedCollection facility" should {
 
-    val testSpec = new Specification with MongoMocks {
-      mockedCollection("foo")
-    }
-
-    "return null if no named collection matches" in {
-      testSpec.mockDB.collection("bar") must beNull
-    }
-
-    "return a mock if named collection matches" in {
-      testSpec.mockDB.collection("foo") must not beNull
-    }
-
-  }
-
-  "givenMongoCollectionFind" should {
-    val testSpec = new Specification with MongoMocks {
-      val coll = mockedCollection("foo")
-    }
-
-    "mock the find call to return nothing" in {
-      testSpec.givenMongoFindReturnsNothing(testSpec.coll)
-      val qb = testSpec.coll.find(JsObject(Nil))
-      Await.result(qb.one, shortWait) must beNone
-    }
-  }
 }

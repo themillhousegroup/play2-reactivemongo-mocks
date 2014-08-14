@@ -9,7 +9,6 @@ import reactivemongo.api.FailoverStrategy
 import com.themillhousegroup.reactivemongo.logging.Logging
 
 //// Reactive Mongo plugin
-import play.modules.reactivemongo._
 import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
 //
 import org.specs2.mock.Mockito
@@ -17,8 +16,7 @@ import org.specs2.mock.Mockito
 //import play.api.test.Helpers._
 import play.api.libs.json._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
-import reactivemongo.core.commands.{LastError, GetLastError}
+import reactivemongo.core.commands.LastError
 
 
 /**
