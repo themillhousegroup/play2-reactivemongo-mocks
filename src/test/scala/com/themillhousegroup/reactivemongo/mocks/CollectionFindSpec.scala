@@ -3,11 +3,10 @@ package com.themillhousegroup.reactivemongo.mocks
 import org.specs2.mutable.Specification
 import play.api.libs.json.{JsString, JsObject}
 import play.modules.reactivemongo.json.collection.JSONCollection
-import scala.concurrent.Await
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
 
-class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoTests {
+class CollectionFindSpec extends Specification  with CommonMongoTests {
 
   private class MockedCollectionScope extends Scope {
     val testSpec = new Specification with MongoMocks {

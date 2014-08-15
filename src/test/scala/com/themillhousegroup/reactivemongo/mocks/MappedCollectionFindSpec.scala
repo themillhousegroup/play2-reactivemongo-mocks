@@ -11,7 +11,7 @@ import org.specs2.specification.Scope
 import play.modules.reactivemongo.json.collection._
 
 
-class MappedMongoCollectionRetrievalSpec extends Specification  with CommonMongoTests {
+class MappedCollectionFindSpec extends Specification  with CommonMongoTests {
 
   case class MSpec(val mockData:Map[String, Set[JsObject]]) extends Specification with MappedMongoMocking
 
