@@ -64,6 +64,13 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
       findOne(c, firstSingleFieldObject) must beSome(firstSingleFieldObject)
     }
 
+    "be able to mock the find-exact call to return some other thing" in new MockedCollectionScope {
+      val searchedThing = JsString("thing")
+
+      testSpec.givenMongoFindExactReturnsSome(c, firstSingleFieldObject, secondSingleFieldObject)
+      findOne(c, firstSingleFieldObject) must beSome(secondSingleFieldObject)
+    }
+
     "be able to mock the find-exact call to return an Option" in new MockedCollectionScope {
       val searchedOption = Some(firstSingleFieldObject)
 

@@ -36,13 +36,7 @@ trait MappedMongoMocking extends MongoMocks {
     givenMongoFindAnyReturnsNone(coll)
 
     // Now override with specific exact-match cases:
-    contents.foreach { obj =>
-      givenMongoCollectionFindReturns(
-        coll,
-        org.mockito.Matchers.eq(obj),
-        Some(obj)
-      )
-    }
+    contents.foreach ( givenMongoFindExactReturnsItself(coll, _) )
   }
 
 }

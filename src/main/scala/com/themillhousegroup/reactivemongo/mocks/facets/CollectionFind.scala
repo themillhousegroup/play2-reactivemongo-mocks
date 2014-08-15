@@ -19,7 +19,7 @@ import reactivemongo.core.commands.LastError
 trait CollectionFind extends MongoMockFacet {
 
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
-  protected def givenMongoCollectionFindReturns(targetCollection:JSONCollection,
+  private def givenMongoCollectionFindReturns(targetCollection:JSONCollection,
                                                 findMatcher: =>JsObject,
                                                 result:Option[JsValue]):JSONQueryBuilder = {
 
@@ -60,6 +60,8 @@ trait CollectionFind extends MongoMockFacet {
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, None)
   def givenMongoFindExactReturnsItself(targetCollection:JSONCollection, exactMatch:JsObject) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, Some(exactMatch))
+  def givenMongoFindExactReturnsSome(targetCollection:JSONCollection, exactMatch:JsObject, result:JsValue) =
+    givenMongoCollectionFindExactReturns(targetCollection, exactMatch, Some(result))
   def givenMongoFindExactReturns(targetCollection:JSONCollection, exactMatch:JsObject, optResult:Option[JsValue]) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, optResult)
 
