@@ -43,11 +43,24 @@ trait CollectionFind extends MongoMockFacet {
                                                    result:Option[JsValue]):JSONQueryBuilder =
     givenMongoCollectionFindReturns(targetCollection, any[JsObject], result)
 
-  def givenMongoFindAnyReturnsNothing(targetCollection:JSONCollection) =
+  def givenMongoFindAnyReturnsNone(targetCollection:JSONCollection) =
     givenMongoCollectionFindAnyReturns(targetCollection, None)
   def givenMongoFindAnyReturnsSome(targetCollection:JSONCollection, result:JsValue) =
     givenMongoCollectionFindAnyReturns(targetCollection, Some(result))
   def givenMongoFindAnyReturns(targetCollection:JSONCollection, optResult:Option[JsValue]) =
     givenMongoCollectionFindAnyReturns(targetCollection, optResult)
+
+
+  protected def givenMongoCollectionFindExactReturns( targetCollection:JSONCollection,
+                                                      exactMatch:JsObject,
+                                                      result:Option[JsValue]):JSONQueryBuilder =
+    givenMongoCollectionFindReturns(targetCollection, org.mockito.Matchers.eq(exactMatch), result)
+
+  def givenMongoFindExactReturnsNone(targetCollection:JSONCollection, exactMatch:JsObject) =
+    givenMongoCollectionFindExactReturns(targetCollection, exactMatch, None)
+  def givenMongoFindExactReturnsItself(targetCollection:JSONCollection, exactMatch:JsObject) =
+    givenMongoCollectionFindExactReturns(targetCollection, exactMatch, Some(exactMatch))
+  def givenMongoFindExactReturns(targetCollection:JSONCollection, exactMatch:JsObject, optResult:Option[JsValue]) =
+    givenMongoCollectionFindExactReturns(targetCollection, exactMatch, optResult)
 
 }

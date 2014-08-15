@@ -13,6 +13,8 @@ class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoT
     val testSpec = new Specification with MongoMocks {
       val coll = mockedCollection("foo")
     }
+
+    val c = testSpec.coll
   }
 
   "The mockedCollection facility" should {
@@ -27,28 +29,70 @@ class MongoMocksCollectionRetrievalSpec extends Specification  with CommonMongoT
 
   }
 
-  "givenMongoCollectionFindReturns" should {
+  "find-any support" should {
 
-    "be able to mock the find call to return nothing" in new MockedCollectionScope {
-      testSpec.givenMongoFindAnyReturnsNothing(testSpec.coll)
-      val qb = testSpec.coll.find(JsObject(Nil))
-      Await.result(qb.one[JsObject], shortWait) must beNone
+    "be able to mock the find-any call to return nothing" in new MockedCollectionScope {
+      testSpec.givenMongoFindAnyReturnsNone(c)
+      findOne(c, JsObject(Nil)) must beNone
     }
 
-    "be able to mock the find call to return something" in new MockedCollectionScope {
+    "be able to mock the find-any call to return something" in new MockedCollectionScope {
       val searchedThing = JsString("thing")
 
-      testSpec.givenMongoFindAnyReturnsSome(testSpec.coll, searchedThing)
-      val qb = testSpec.coll.find(JsObject(Nil))
-      Await.result(qb.one[JsObject], shortWait) must beSome(searchedThing)
+      testSpec.givenMongoFindAnyReturnsSome(c, searchedThing)
+      findOne(c, JsObject(Nil))  must beSome(searchedThing)
     }
 
-    "be able to mock the find call to return an Option" in new MockedCollectionScope {
+    "be able to mock the find-any call to return an Option" in new MockedCollectionScope {
       val searchedOption = Some(JsString("thing"))
 
-      testSpec.givenMongoFindAnyReturns(testSpec.coll, searchedOption)
-      val qb = testSpec.coll.find(JsObject(Nil))
-      Await.result(qb.one[JsObject], shortWait) must beEqualTo(searchedOption)
+      testSpec.givenMongoFindAnyReturns(c, searchedOption)
+      findOne(c, JsObject(Nil)) must beEqualTo(searchedOption)
+    }
+  }
+
+  "find-exact support" should {
+
+    "be able to mock the find-exact call to return nothing" in new MockedCollectionScope {
+      testSpec.givenMongoFindExactReturnsNone(c, firstSingleFieldObject)
+      findOne(c, firstSingleFieldObject) must beNone
+    }
+
+    "be able to mock the find-exact call to return itself" in new MockedCollectionScope {
+      val searchedThing = JsString("thing")
+
+      testSpec.givenMongoFindExactReturnsItself(c, firstSingleFieldObject)
+      findOne(c, firstSingleFieldObject) must beSome(firstSingleFieldObject)
+    }
+
+    "be able to mock the find-exact call to return an Option" in new MockedCollectionScope {
+      val searchedOption = Some(firstSingleFieldObject)
+
+      testSpec.givenMongoFindExactReturns(c, firstSingleFieldObject, searchedOption)
+      findOne(c, firstSingleFieldObject) must beEqualTo(searchedOption)
+    }
+  }
+
+  "setting multiple behaviours" should {
+    "allow find methods to return None when something is not found" in new MockedCollectionScope {
+      testSpec.givenMongoFindAnyReturnsNone(c)
+      testSpec.givenMongoFindExactReturnsItself(c, firstSingleFieldObject)
+      testSpec.givenMongoFindExactReturnsItself(c, thirdSingleFieldObject)
+
+      findOne(c, secondSingleFieldObject) must beNone
+      findOne(c, firstSingleFieldObject) must beSome(firstSingleFieldObject)
+      findOne(c, thirdSingleFieldObject) must beSome(thirdSingleFieldObject)
+    }
+
+    "require behaviour to be specified in order from general to specific" in new MockedCollectionScope {
+
+      testSpec.givenMongoFindExactReturnsItself(c, firstSingleFieldObject)
+      testSpec.givenMongoFindExactReturnsItself(c, thirdSingleFieldObject)
+      testSpec.givenMongoFindAnyReturnsNone(c)
+
+      findOne(c, firstSingleFieldObject) must beNone
+      findOne(c, secondSingleFieldObject) must beNone
+      findOne(c, thirdSingleFieldObject) must beNone
     }
   }
 }

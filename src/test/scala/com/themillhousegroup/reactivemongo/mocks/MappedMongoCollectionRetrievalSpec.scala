@@ -45,20 +45,17 @@ class MappedMongoCollectionRetrievalSpec extends Specification  with CommonMongo
       val testSpec = MSpec(Map(name -> values.toSet))
     }
 
-    val testObject = JsObject(Seq("bar" -> JsNumber(1)))
-    val otherObject = JsObject(Seq("baz" -> JsNumber(2)))
-
     "be able to mock the find call to return an exact match - positive case" in new NameValueCollectionScope(
-      "foo", testObject) {
+      "foo", firstSingleFieldObject) {
 
-      val qb = testSpec.mockDB.collection("foo").find(testObject)
-      Await.result(qb.one[JsObject], shortWait) must beSome(testObject)
+      val qb = testSpec.mockDB.collection("foo").find(firstSingleFieldObject)
+      Await.result(qb.one[JsObject], shortWait) must beSome(firstSingleFieldObject)
     }
 
     "be able to mock the find call to return an exact match - negative case" in new NameValueCollectionScope(
-      "foo", testObject) {
+      "foo", firstSingleFieldObject) {
 
-      val qb = testSpec.mockDB.collection("foo").find(otherObject)
+      val qb = testSpec.mockDB.collection("foo").find(secondSingleFieldObject)
       Await.result(qb.one[JsObject], shortWait) must beNone
     }
 

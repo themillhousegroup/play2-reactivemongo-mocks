@@ -33,7 +33,7 @@ trait MappedMongoMocking extends MongoMocks {
     val coll = collectionsByName(collName)
 
     // Set up the default behaviour if we don't match: return a None
-    givenMongoFindAnyReturnsNothing(coll)
+    givenMongoFindAnyReturnsNone(coll)
 
     // Now override with specific exact-match cases:
     contents.foreach { obj =>
