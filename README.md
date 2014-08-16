@@ -23,6 +23,7 @@ If you are executing complex multi-Collection join-like queries, it may end up b
 #### Traditional Mock Definitions
 
 #### The ```Map``` Abstraction
+Extend ```MappedMongoMocking``` and define ```mockData``` WithThe
 
 ## Credits
 Standing on the shoulders of giants:
