@@ -23,7 +23,7 @@ If you are executing complex multi-Collection join-like queries, it may end up b
 #### Traditional Mock Definitions
 
 #### The ```Map``` Abstraction
-Extend ```MappedMongoMocking``` and define ```mockData``` WithThe
+Mix in ```MappedMongoMocking``` and define ```mockData``` - a ```Map[String, Set[JsObject]``` i.e. mapping CollectionName to its contents. That's it! All of your Mongo ```find()``` operations will now work against this data. 
 
 ## Credits
 Standing on the shoulders of giants:
