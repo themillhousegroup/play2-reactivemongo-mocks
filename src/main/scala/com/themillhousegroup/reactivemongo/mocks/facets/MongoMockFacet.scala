@@ -7,9 +7,10 @@ import org.mockito.Matchers
 
 trait MongoMockFacet extends Mockito with Logging {
 
-  protected def mockResult(ok:Boolean) = {
+  protected def mockResult(ok:Boolean):LastError = {
     val mockResult = mock[LastError]
     mockResult.ok returns ok
+    mockResult
   }
 
 

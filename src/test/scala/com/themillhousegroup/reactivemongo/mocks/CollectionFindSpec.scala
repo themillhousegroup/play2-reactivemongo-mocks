@@ -6,15 +6,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
 
-class CollectionFindSpec extends Specification  with CommonMongoTests {
-
-  private class MockedCollectionScope extends Scope {
-    val testSpec = new Specification with MongoMocks {
-      val coll = mockedCollection("foo")
-    }
-
-    val c = testSpec.coll
-  }
+class CollectionFindSpec extends Specification with CommonMongoTests {
 
   "The mockedCollection facility" should {
 

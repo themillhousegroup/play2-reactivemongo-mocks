@@ -77,7 +77,7 @@ trait CollectionFind extends MongoMockFacet {
 
     val cursorAnswer = new Answer[Cursor[JsObject]] {
       def answer(invocation: InvocationOnMock): Cursor[JsObject] = {
-        logger.trace(s"Handling ${invocation.getMethod.getName} by returning ${futureResults}")
+        logger.trace(s"Handling ${invocation.getMethod.getName} by returning a Cursor around ${futureResults}")
         mockCursor
       }
     }
