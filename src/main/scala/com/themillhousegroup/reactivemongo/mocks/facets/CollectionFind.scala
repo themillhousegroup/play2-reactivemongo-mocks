@@ -3,11 +3,12 @@ package com.themillhousegroup.reactivemongo.mocks.facets
 import reactivemongo.api.{Cursor, FailoverStrategy}
 import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
+import scala.collection.generic.CanBuildFrom
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
 import play.api.libs.json._
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait CollectionFind extends MongoMockFacet {
@@ -47,17 +48,23 @@ trait CollectionFind extends MongoMockFacet {
   private def setupCursor[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, results:T[JsObject]) = {
 
     val mockCursor = mock[Cursor[JsObject]]
+
     mockCursor.headOption answers { _ =>
       logger.debug(s"Returning ${results.headOption} as the cursor headOption")
       Future.successful(results.headOption)
     }
 
-//    // TODO: The Enumerator (iteratee) API of Cursor?
-//    mockCursor.collect[T](anyInt, anyBoolean) answers { case (upTo:Int, stopOnErr) =>
-//      val subList = results.take(upTo)
-//      logger.debug(s"Returning ${subList} as the cursor collect")
-//      Future.successful(subList)
-//    }
+    // TODO: The Enumerator (iteratee) API of Cursor?
+
+
+    mockCursor.collect[Traversable](
+      anyInt, anyBoolean)(
+      any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
+      any[ExecutionContext]) answers { upTo =>
+      val subList = results.take(upTo.asInstanceOf[Int])
+      logger.debug(s"Returning ${subList} as the cursor collect")
+      Future.successful(subList)
+    }
 
 
     val cursorAnswer = new Answer[Cursor[JsObject]] {
