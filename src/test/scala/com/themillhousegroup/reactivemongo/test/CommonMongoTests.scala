@@ -21,6 +21,11 @@ trait CommonMongoTests extends Logging {
     Await.result(qb.one[JsObject], shortWait)
   }
 
+  def findCursorHeadOption(c:JSONCollection, thingToFind:JsObject):Option[JsObject] = {
+    val qb = c.find(thingToFind)
+    Await.result(qb.cursor[JsObject].headOption, shortWait)
+  }
+
   def findCursor(c:JSONCollection, thingToFind:JsObject):Future[List[JsObject]] = {
     val qb = c.find(thingToFind)
     qb.cursor[JsObject].collect[List](Int.MaxValue)

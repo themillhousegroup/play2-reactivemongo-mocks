@@ -28,7 +28,7 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
 
   }
 
-  "find-any support" should {
+  "find-any (one) support" should {
 
     "be able to mock the find-any call to return nothing" in new MockedCollectionScope {
       testSpec.givenMongoFindAnyReturnsNone(c)
@@ -47,13 +47,15 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
       testSpec.givenMongoFindAnyReturns(c, searchedOption)
       findOne(c, JsObject(Nil)) must beEqualTo(searchedOption)
     }
+  }
 
-//    "be able to mock the find-any call to return a collection" in new MockedCollectionScope {
-//      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
-//
-//      testSpec.givenMongoFindAnyReturns(c, returnValues)
-//      findCursor(c, JsObject(Nil)) must beEqualTo(returnValues)
-//    }
+  "find-any (cursor) support" should {
+    "be able to mock the find-any call to return a collection's headOption" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+
+      testSpec.givenMongoFindAnyReturns(c, returnValues)
+      findCursorHeadOption(c, JsObject(Nil)) must beEqualTo(returnValues.headOption)
+    }
   }
 
   "find-exact support" should {

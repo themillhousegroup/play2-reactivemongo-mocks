@@ -13,14 +13,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait CollectionFind extends MongoMockFacet {
 
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
-  private def givenMongoCollectionFindReturns[A, T[A] <: Traversable[A]](targetCollection:JSONCollection,
+  private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection,
                                                 findMatcher: =>JsObject,
-                                                results:T[A]):JSONQueryBuilder = {
+                                                results:T[JsObject]):JSONQueryBuilder = {
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
     setupOne(spiedQB, results)
-//    setupCursor(spiedQB, results)
+    setupCursor(spiedQB, results)
 
     spiedQB.sort(any[JsObject]) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns itself in response to sort request")
@@ -34,9 +34,9 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB
   }
 
-  private def setupOne[A, T[A] <: Traversable[A]](spiedQB:JSONQueryBuilder, results:T[A]) = {
-    val oneAnswer = new Answer[Future[Option[A]]] {
-      def answer(invocation: InvocationOnMock): Future[Option[A]] = {
+  private def setupOne[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, results:T[JsObject]) = {
+    val oneAnswer = new Answer[Future[Option[JsObject]]] {
+      def answer(invocation: InvocationOnMock): Future[Option[JsObject]] = {
         logger.trace(s"Handling ${invocation.getMethod.getName} by returning ${results.headOption}")
         Future.successful (results.headOption)
       }
@@ -44,34 +44,34 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer ( oneAnswer ).when(spiedQB).one[JsObject]
   }
 
-//  private def setupCursor[A, T[A] <: Traversable[A]](spiedQB:JSONQueryBuilder, results:T[A]) = {
-//
-//    val mockCursor = mock[Cursor[JsObject]]
-//    mockCursor.headOption answers { _ =>
-//      logger.debug(s"Returning ${results.headOption} as the cursor headOption")
-//      Future.successful(results.headOption)
-//    }
-//
+  private def setupCursor[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, results:T[JsObject]) = {
+
+    val mockCursor = mock[Cursor[JsObject]]
+    mockCursor.headOption answers { _ =>
+      logger.debug(s"Returning ${results.headOption} as the cursor headOption")
+      Future.successful(results.headOption)
+    }
+
 //    // TODO: The Enumerator (iteratee) API of Cursor?
-//    mockCursor.collect[T[A]](anyInt, anyBoolean) answers { case (upTo:Int, stopOnErr) =>
+//    mockCursor.collect[T](anyInt, anyBoolean) answers { case (upTo:Int, stopOnErr) =>
 //      val subList = results.take(upTo)
 //      logger.debug(s"Returning ${subList} as the cursor collect")
 //      Future.successful(subList)
 //    }
-//
-//
-//    val cursorAnswer = new Answer[Cursor[JsObject]] {
-//      def answer(invocation: InvocationOnMock): Cursor[JsObject] = {
-//        logger.trace(s"Handling ${invocation.getMethod.getName} by returning ${results}")
-//        mockCursor
-//      }
-//    }
-//
-//    org.mockito.Mockito.doAnswer ( cursorAnswer ).when(spiedQB).cursor[JsObject]
-//  }
 
-  protected def givenMongoCollectionFindAnyReturns[A, T[A] <: Traversable[A]](targetCollection:JSONCollection,
-                                                   results:T[A]):JSONQueryBuilder =
+
+    val cursorAnswer = new Answer[Cursor[JsObject]] {
+      def answer(invocation: InvocationOnMock): Cursor[JsObject] = {
+        logger.trace(s"Handling ${invocation.getMethod.getName} by returning ${results}")
+        mockCursor
+      }
+    }
+
+    org.mockito.Mockito.doAnswer ( cursorAnswer ).when(spiedQB).cursor[JsObject]
+  }
+
+  protected def givenMongoCollectionFindAnyReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection,
+                                                   results:T[JsObject]):JSONQueryBuilder =
     givenMongoCollectionFindReturns(targetCollection, any[JsObject], results)
 
   def givenMongoFindAnyReturnsNone(targetCollection:JSONCollection) =
