@@ -101,6 +101,26 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
     }
   }
 
+  "collection find failure support" should {
+    "allow a find-one call to return a failed future" in new MockedCollectionScope {
+      testSpec.givenMongoFindFailsWith(c, testThrowable)
+
+      findOne(c, firstSingleFieldObject) must haveThrownTheTestThrowable
+    }
+
+    "allow a find-cursor-headOption call to return a failed future" in new MockedCollectionScope {
+      testSpec.givenMongoFindFailsWith(c, testThrowable)
+
+      findCursorHeadOption(c, firstSingleFieldObject) must haveThrownTheTestThrowable
+    }
+
+    "allow a find-cursor-collect call to return a failed future" in new MockedCollectionScope {
+      testSpec.givenMongoFindFailsWith(c, testThrowable)
+
+      findCursorCollect(c, firstSingleFieldObject) must haveThrownTheTestThrowable
+    }
+  }
+
   "setting multiple behaviours" should {
     "allow find methods to return None when something is not found" in new MockedCollectionScope {
       testSpec.givenMongoFindAnyReturnsNone(c)
