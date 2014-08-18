@@ -35,19 +35,25 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
       findOne(c, JsObject(Nil)) must beNone
     }
 
-    "be able to mock the find-any call to return something" in new MockedCollectionScope {
-      val searchedThing = JsString("thing")
+    "be able to mock the find-any call to return one thing" in new MockedCollectionScope {
 
-      testSpec.givenMongoFindAnyReturnsSome(c, searchedThing)
-      findOne(c, JsObject(Nil))  must beSome(searchedThing)
+      testSpec.givenMongoFindAnyReturnsSome(c, firstSingleFieldObject)
+      findOne(c, JsObject(Nil))  must beSome(firstSingleFieldObject)
     }
 
     "be able to mock the find-any call to return an Option" in new MockedCollectionScope {
-      val searchedOption = Some(JsString("thing"))
+      val searchedOption = Some(firstSingleFieldObject)
 
       testSpec.givenMongoFindAnyReturns(c, searchedOption)
       findOne(c, JsObject(Nil)) must beEqualTo(searchedOption)
     }
+
+//    "be able to mock the find-any call to return a collection" in new MockedCollectionScope {
+//      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+//
+//      testSpec.givenMongoFindAnyReturns(c, returnValues)
+//      findCursor(c, JsObject(Nil)) must beEqualTo(returnValues)
+//    }
   }
 
   "find-exact support" should {
