@@ -1,20 +1,16 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-import com.themillhousegroup.reactivemongo.mocks.MongoMocks
-import reactivemongo.api.CollectionProducer
-import reactivemongo.api.collections.GenericQueryBuilder
-import reactivemongo.api.DefaultDB
 import reactivemongo.api.FailoverStrategy
+import org.mockito.stubbing.Answer
+import org.mockito.invocation.InvocationOnMock
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
 //
-import org.specs2.mock.Mockito
 
 import play.api.libs.json._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import reactivemongo.core.commands.LastError
 
 trait CollectionFind extends MongoMockFacet {
 
@@ -25,7 +21,14 @@ trait CollectionFind extends MongoMockFacet {
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
-    org.mockito.Mockito.doReturn(Future.successful (result)).when(spiedQB).one[JsObject]
+    val oneAnswer = new Answer[Future[Option[JsValue]]] {
+      def answer(invocation: InvocationOnMock): Future[Option[JsValue]] = {
+        logger.trace(s"Handling ${invocation.getMethod.getName} by returning $result")
+        Future.successful (result)
+      }
+    }
+
+    org.mockito.Mockito.doAnswer ( oneAnswer ).when(spiedQB).one[JsObject]
 
     spiedQB.sort(any[JsObject]) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns itself in response to sort request")
