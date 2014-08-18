@@ -56,6 +56,13 @@ class CollectionFindSpec extends Specification  with CommonMongoTests {
       testSpec.givenMongoFindAnyReturns(c, returnValues)
       findCursorHeadOption(c, JsObject(Nil)) must beEqualTo(returnValues.headOption)
     }
+
+    "be able to mock the find-any call to return a collection via collect()" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+
+      testSpec.givenMongoFindAnyReturns(c, returnValues)
+      findCursorCollect(c, JsObject(Nil)) must beEqualTo(returnValues)
+    }
   }
 
   "find-exact support" should {
