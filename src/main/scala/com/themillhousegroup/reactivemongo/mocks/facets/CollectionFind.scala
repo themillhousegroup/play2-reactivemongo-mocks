@@ -20,19 +20,27 @@ trait CollectionFind extends MongoMockFacet {
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
+    setupQueryBuilder(spiedQB)
     setupOne(spiedQB, Future.successful(results))
     setupCursor(spiedQB, Future.successful(results))
-
-    spiedQB.sort(anyJs) answers { _ =>
-      logger.debug(s"Returning queryBuilder that returns itself in response to sort request")
-      spiedQB
-    }
 
     targetCollection.find(findMatcher)(anyJsWrites) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $results in response to find request")
       spiedQB
     }
     spiedQB
+  }
+
+  // Return "self" in all cases
+  private def setupQueryBuilder(spiedQB:JSONQueryBuilder) = {
+    val returnSelf = { a:Any =>
+      logger.trace(s"Returning queryBuilder that returns itself in response to sort request")
+      spiedQB
+    }
+
+    spiedQB.sort(anyJs) answers returnSelf
+    spiedQB.hint(anyJs) answers returnSelf
+    spiedQB.projection(anyJs) answers returnSelf
   }
 
   private def setupOne[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, futureResults:Future[T[JsObject]]) = {

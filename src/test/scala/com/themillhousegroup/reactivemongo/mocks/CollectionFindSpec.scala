@@ -5,6 +5,7 @@ import play.api.libs.json.{JsString, JsObject}
 import play.modules.reactivemongo.json.collection.JSONCollection
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
+import scala.concurrent.Await
 
 class CollectionFindSpec extends Specification with CommonMongoTests {
 
@@ -90,6 +91,29 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
 
       testSpec.givenMongoFindExactReturns(c, firstSingleFieldObject, searchedOption)
       findOne(c, firstSingleFieldObject) must beEqualTo(searchedOption)
+    }
+  }
+
+  "query builder support" should {
+
+    class QBTestScope extends MockedCollectionScope {
+      val qb = {
+        testSpec.givenMongoFindExactReturnsNone(c, firstSingleFieldObject)
+        c.find(firstSingleFieldObject)
+      }
+    }
+
+
+    "permit a sort order to be specified without error" in new QBTestScope {
+      qb.sort(secondSingleFieldObject) must beEqualTo(qb)
+    }
+
+    "permit a hint to be specified without error" in new QBTestScope {
+      qb.hint(secondSingleFieldObject) must beEqualTo(qb)
+    }
+
+    "permit a projection to be specified without error" in new QBTestScope {
+      qb.projection(secondSingleFieldObject) must beEqualTo(qb)
     }
   }
 
