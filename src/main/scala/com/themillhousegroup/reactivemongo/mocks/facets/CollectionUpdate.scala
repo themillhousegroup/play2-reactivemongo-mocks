@@ -25,7 +25,7 @@ trait CollectionUpdate extends MongoMockFacet {
 
     targetCollection.update(
       selectorMatcher, updateMatcher, anyWriteConcern, anyBoolean, anyBoolean)(
-      anyJsWrites, anyJsWrites, any[ExecutionContext]) answers { o =>
+      anyJsWrites, anyJsWrites, anyEC) answers { o =>
       logger.debug(s"Update of object $o will be considered a ${bool2Success(ok)}")
       Future.successful(mockResult(ok))
     }
@@ -34,8 +34,8 @@ trait CollectionUpdate extends MongoMockFacet {
   def givenAnyMongoUpdateIsOK(targetCollection:JSONCollection, ok:Boolean = true) = {
     setupMongoUpdates(
       targetCollection,
-      any[JsObject],
-      any[JsObject],
+      anyJs,
+      anyJs,
       ok)
   }
 
@@ -44,7 +44,7 @@ trait CollectionUpdate extends MongoMockFacet {
     setupMongoUpdates(
       targetCollection,
       org.mockito.Matchers.eq(selector),
-      any[JsObject],
+      anyJs,
       ok)
   }
 

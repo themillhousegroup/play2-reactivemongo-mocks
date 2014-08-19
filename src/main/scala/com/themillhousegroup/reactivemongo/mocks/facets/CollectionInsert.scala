@@ -24,14 +24,14 @@ trait CollectionInsert extends MongoMockFacet {
       logger.debug(s"unchecked insert of $o, recorded for verification (${uncheckedInserts.size})")
     }
 
-    targetCollection.insert(insertMatcher)(any[ExecutionContext]) answers { o =>
+    targetCollection.insert(insertMatcher)(anyEC) answers { o =>
       logger.debug(s"Insert of object $o will be considered a ${bool2Success(ok)}")
       Future.successful(mockResult(ok))
     }
   }
 
   def givenAnyMongoInsertIsOK(targetCollection:JSONCollection, ok:Boolean = true) = {
-    setupMongoInserts(targetCollection, any[JsObject], ok)
+    setupMongoInserts(targetCollection, anyJs, ok)
   }
 
 

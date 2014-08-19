@@ -23,7 +23,7 @@ trait CollectionFind extends MongoMockFacet {
     setupOne(spiedQB, Future.successful(results))
     setupCursor(spiedQB, Future.successful(results))
 
-    spiedQB.sort(any[JsObject]) answers { _ =>
+    spiedQB.sort(anyJs) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns itself in response to sort request")
       spiedQB
     }
@@ -65,7 +65,7 @@ trait CollectionFind extends MongoMockFacet {
     mockCursor.collect[Traversable](
       anyInt, anyBoolean)(
       any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
-      any[ExecutionContext]) answers { upTo =>
+      anyEC) answers { upTo =>
 
       futureResults.map { results =>
         val subList = results.take(upTo.asInstanceOf[Int])
@@ -93,7 +93,7 @@ trait CollectionFind extends MongoMockFacet {
 
   protected def givenMongoCollectionFindAnyReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection,
                                                    results:T[JsObject]):JSONQueryBuilder =
-    givenMongoCollectionFindReturns(targetCollection, any[JsObject], results)
+    givenMongoCollectionFindReturns(targetCollection, anyJs, results)
 
   def givenMongoFindAnyReturnsNone(targetCollection:JSONCollection) =
     givenMongoCollectionFindAnyReturns(targetCollection, Seq[JsObject]())
