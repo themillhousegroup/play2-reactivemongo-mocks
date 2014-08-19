@@ -19,7 +19,7 @@ trait CollectionInsert extends MongoMockFacet {
                                     ok:Boolean) = {
 
     // Nothing to mock an answer for - it's unchecked - but we record the insert to be useful
-    targetCollection.uncheckedInsert(insertMatcher)(any[Writes[JsObject]]) answers { o =>
+    targetCollection.uncheckedInsert(insertMatcher)(anyJsWrites) answers { o =>
       uncheckedInserts = uncheckedInserts :+ o
       logger.debug(s"unchecked insert of $o, recorded for verification (${uncheckedInserts.size})")
     }

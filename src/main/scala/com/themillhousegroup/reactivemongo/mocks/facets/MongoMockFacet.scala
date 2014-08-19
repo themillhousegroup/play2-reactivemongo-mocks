@@ -1,8 +1,9 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
 import org.specs2.mock.Mockito
-import reactivemongo.core.commands.LastError
+import reactivemongo.core.commands.{GetLastError, LastError}
 import org.mockito.Matchers
+import play.api.libs.json.{JsObject, Writes}
 
 
 trait MongoMockFacet extends Mockito with Logging {
@@ -16,5 +17,11 @@ trait MongoMockFacet extends Mockito with Logging {
 
   protected def bool2Success(ok:Boolean) = if (ok) "success" else "failure"
 
+  // Useful additional matchers:
+
   def anyBoolean = Matchers.anyBoolean
+
+  def anyWriteConcern = Matchers.any[GetLastError]
+
+  def anyJsWrites = Matchers.any[Writes[JsObject]]
 }

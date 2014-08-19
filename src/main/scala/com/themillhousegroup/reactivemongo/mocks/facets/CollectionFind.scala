@@ -28,7 +28,7 @@ trait CollectionFind extends MongoMockFacet {
       spiedQB
     }
 
-    targetCollection.find(findMatcher)(any[Writes[JsObject]]) answers { _ =>
+    targetCollection.find(findMatcher)(anyJsWrites) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $results in response to find request")
       spiedQB
     }
