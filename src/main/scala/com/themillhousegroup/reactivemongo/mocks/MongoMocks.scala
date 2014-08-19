@@ -20,7 +20,8 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 trait MongoMocks extends Mockito  with Logging
                                   with CollectionFind
-                                  with CollectionInsert {
+                                  with CollectionInsert
+                                  with CollectionUpdate {
   this: org.specs2.mutable.Specification =>
 
   lazy val mockDatabaseName = "mockDB"

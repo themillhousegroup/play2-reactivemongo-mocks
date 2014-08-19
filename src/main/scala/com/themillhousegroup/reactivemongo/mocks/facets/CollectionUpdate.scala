@@ -8,20 +8,44 @@ import play.api.libs.json._
 
 trait CollectionUpdate extends MongoMockFacet {
 
-//  def givenMongoUpdateIsOK(targetCollection:JSONCollection, ok:Boolean) = {
-//
-//    // Nothing to mock an answer for - it's unchecked
-//    targetCollection.uncheckedUpdate(selector: S, update: U, upsert: Boolean, multi: Boolean)(implicit selectorWriter: play.api.libs.json.Writes[S], implicit updateWriter: play.api.libs.json.Writes[U])
-//    (any[JsObject]) answers { o =>
-//      logger.debug(s"Unchecked update of object $o")
-//    }
-//
-//    targetCollection.update(
-//      selector: S, update: U, writeConcern: reactivemongo.core.commands.GetLastError, upsert: Boolean, multi: Boolean)(implicit selectorWriter: play.api.libs.json.Writes[S], implicit updateWriter: play.api.libs.json.Writes[U], implicit ec: scala.concurrent.ExecutionContext)
-//    (any[JsObject])(any[ExecutionContext]) answers { o =>
-//      logger.debug(s"Update of object $o will be considered a ${bool2Success(ok)}")
-//      Future.successful(mockResult(ok))
-//    }
-//  }
+  var uncheckedUpdates = Seq[Any]()
+
+  private def setupMongoUpdates( targetCollection:JSONCollection,
+                                 selectorMatcher: =>JsObject,
+                                 updateMatcher: =>JsObject,
+                                 ok:Boolean) = {
+
+    // Nothing to mock an answer for - it's unchecked - but we record the update to be useful
+    targetCollection.uncheckedUpdate(
+      selectorMatcher, updateMatcher)(
+      any[Writes[JsObject]], any[Writes[JsObject]]) answers { o =>
+      uncheckedUpdates = uncheckedUpdates :+ o
+      logger.debug(s"unchecked update of $o, recorded for verification (${uncheckedUpdates.size})")
+    }
+
+    targetCollection.update(
+      selectorMatcher, updateMatcher)(
+      any[Writes[JsObject]], any[Writes[JsObject]], any[ExecutionContext]) answers { o =>
+      logger.debug(s"Update of object $o will be considered a ${bool2Success(ok)}")
+      Future.successful(mockResult(ok))
+    }
+  }
+
+  def givenAnyMongoUpdateIsOK(targetCollection:JSONCollection, ok:Boolean = true) = {
+    setupMongoUpdates(
+      targetCollection,
+      any[JsObject],
+      any[JsObject],
+      ok)
+  }
+
+
+  def givenMongoUpdateIsOK(targetCollection:JSONCollection, selector:JsObject, ok:Boolean = true) = {
+    setupMongoUpdates(
+      targetCollection,
+      org.mockito.Matchers.eq(selector),
+      any[JsObject],
+      ok)
+  }
 
 }

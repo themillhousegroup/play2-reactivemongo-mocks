@@ -5,30 +5,30 @@ import org.specs2.mutable.Specification
 
 class CollectionUpdateSpec extends Specification with CommonMongoTests {
 
-  "Insert mocking" should {
-    "Allow an insert to be considered OK" in new MockedCollectionScope {
-      testSpec.givenAnyMongoInsertIsOK(c)
-      resultOf(c.insert(firstSingleFieldObject)) should beTrue
+  "Update mocking" should {
+    "Allow an update to be considered OK" in new MockedCollectionScope {
+      testSpec.givenAnyMongoUpdateIsOK(c)
+      resultOf(c.update(firstSingleFieldObject, secondSingleFieldObject)) should beTrue
     }
 
-    "Allow an unchecked insert and record it for verification" in new MockedCollectionScope {
-      testSpec.givenAnyMongoInsertIsOK(c)
+    "Allow an unchecked update and record it for verification" in new MockedCollectionScope {
+      testSpec.givenAnyMongoUpdateIsOK(c)
 
-      testSpec.uncheckedInserts must beEmpty
+      testSpec.uncheckedUpdates must beEmpty
 
-      c.uncheckedInsert(firstSingleFieldObject)
+      c.uncheckedUpdate(firstSingleFieldObject, secondSingleFieldObject)
 
-      testSpec.uncheckedInserts must not beEmpty
+      testSpec.uncheckedUpdates must not beEmpty
     }
 
-    "Allow a particular insert to fail, while others succeed" in new MockedCollectionScope {
-      testSpec.givenMongoInsertIsOK(c, firstSingleFieldObject)
-      testSpec.givenMongoInsertIsOK(c, secondSingleFieldObject, false)
-      testSpec.givenMongoInsertIsOK(c, thirdSingleFieldObject, true)
+    "Allow a particular update to fail, while others succeed" in new MockedCollectionScope {
+      testSpec.givenMongoUpdateIsOK(c, firstSingleFieldObject)
+      testSpec.givenMongoUpdateIsOK(c, secondSingleFieldObject, false)
+      testSpec.givenMongoUpdateIsOK(c, thirdSingleFieldObject, true)
 
-      resultOf(c.insert(firstSingleFieldObject)) should beTrue
-      resultOf(c.insert(secondSingleFieldObject)) should beFalse
-      resultOf(c.insert(thirdSingleFieldObject)) should beTrue
+      resultOf(c.update(firstSingleFieldObject, firstSingleFieldObject)) should beTrue
+      resultOf(c.update(secondSingleFieldObject, firstSingleFieldObject)) should beFalse
+      resultOf(c.update(thirdSingleFieldObject, firstSingleFieldObject)) should beTrue
     }
   }
 }
