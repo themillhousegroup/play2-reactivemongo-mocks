@@ -16,14 +16,10 @@ import com.themillhousegroup.reactivemongo.mocks.MongoMocks
 import reactivemongo.core.commands.LastError
 
 
-trait CommonMongoTests extends Logging with MustThrownMatchers {
+trait CommonMongoTests extends Logging
+                          with MustThrownMatchers
+                          with MongoTestFixtures {
   val shortWait = Duration(100L, "millis")
-
-  val testThrowable = new UnsupportedOperationException("Test error")
-
-  val firstSingleFieldObject = JsObject(Seq("foo" -> JsNumber(1)))
-  val secondSingleFieldObject = JsObject(Seq("bar" -> JsNumber(2)))
-  val thirdSingleFieldObject = JsObject(Seq("baz" -> JsNumber(3)))
 
   protected class MockedCollectionScope extends Scope {
     val testSpec = new Specification with MongoMocks {
