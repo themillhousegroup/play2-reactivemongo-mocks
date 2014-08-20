@@ -16,11 +16,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
- * Still to do:  save, remove, update, uncheckedInsert, uncheckedRemove, uncheckedUpdate
+ * Still to do: remove, uncheckedRemove
  */
 trait MongoMocks extends Mockito  with Logging
                                   with CollectionFind
                                   with CollectionInsert
+                                  with CollectionSave
                                   with CollectionUpdate {
   this: org.specs2.mutable.Specification =>
 
