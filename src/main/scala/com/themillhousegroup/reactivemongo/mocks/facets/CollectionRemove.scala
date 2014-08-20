@@ -12,30 +12,30 @@ import reactivemongo.core.commands.{GetLastError, LastError}
 
 trait CollectionRemove extends MongoMockFacet {
 
-  var uncheckedInserts = Seq[Any]()
+  var uncheckedRemoves = Seq[Any]()
 
-  private def setupMongoInserts( targetCollection:JSONCollection,
-                                    insertMatcher: =>JsObject,
+  private def setupMongoRemoves( targetCollection:JSONCollection,
+                                    removeMatcher: =>JsObject,
                                     ok:Boolean) = {
 
     // Nothing to mock an answer for - it's unchecked - but we record the insert to be useful
-    targetCollection.uncheckedInsert(insertMatcher)(anyJsWrites) answers { o =>
-      uncheckedInserts = uncheckedInserts :+ o
-      logger.debug(s"unchecked insert of $o, recorded for verification (${uncheckedInserts.size})")
+    targetCollection.uncheckedRemove(removeMatcher, anyBoolean)(anyJsWrites, anyEC) answers { o =>
+      uncheckedRemoves = uncheckedRemoves :+ o
+      logger.debug(s"unchecked remove of $o, recorded for verification (${uncheckedRemoves.size})")
     }
 
-    targetCollection.insert(insertMatcher)(anyEC) answers { o =>
-      logger.debug(s"Insert of object $o will be considered a ${bool2Success(ok)}")
+    targetCollection.remove(removeMatcher, anyWriteConcern)(anyJsWrites, anyEC) answers { o =>
+      logger.debug(s"Remove of object $o will be considered a ${bool2Success(ok)}")
       Future.successful(mockResult(ok))
     }
   }
 
-  def givenAnyMongoInsertIsOK(targetCollection:JSONCollection, ok:Boolean = true) = {
-    setupMongoInserts(targetCollection, anyJs, ok)
+  def givenAnyMongoRemoveIsOK(targetCollection:JSONCollection, ok:Boolean = true) = {
+    setupMongoRemoves(targetCollection, anyJs, ok)
   }
 
 
-  def givenMongoInsertIsOK(targetCollection:JSONCollection, objectToInsert:JsObject, ok:Boolean = true) = {
-    setupMongoInserts(targetCollection, org.mockito.Matchers.eq(objectToInsert), ok)
+  def givenMongoRemoveIsOK(targetCollection:JSONCollection, removeQuery:JsObject, ok:Boolean = true) = {
+    setupMongoRemoves(targetCollection, org.mockito.Matchers.eq(removeQuery), ok)
   }
 }

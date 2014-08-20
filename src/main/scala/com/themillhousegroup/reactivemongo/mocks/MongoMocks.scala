@@ -14,13 +14,10 @@ import org.specs2.mock.Mockito
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-/**
- * Still to do: remove, uncheckedRemove
- */
 trait MongoMocks extends Mockito  with Logging
                                   with CollectionFind
                                   with CollectionInsert
+                                  with CollectionRemove
                                   with CollectionSave
                                   with CollectionUpdate {
   this: org.specs2.mutable.Specification =>
