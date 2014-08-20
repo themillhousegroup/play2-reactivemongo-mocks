@@ -34,7 +34,7 @@ trait CollectionFind extends MongoMockFacet {
   // Return "self" in all cases
   private def setupQueryBuilder(spiedQB:JSONQueryBuilder) = {
     val returnSelf = { a:Any =>
-      logger.trace(s"Returning queryBuilder that returns itself in response to sort request")
+      logger.trace(s"Returning queryBuilder that returns itself in response to sort/hint/projection request")
       spiedQB
     }
 

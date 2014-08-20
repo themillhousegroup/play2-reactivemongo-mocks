@@ -1,8 +1,10 @@
 name := "play2-reactivemongo-mocks"
 
+lazy val mocksVersion = "0.1.0"
+
 lazy val targetPlayReactiveMongoVersion = "0.11.0-SNAPSHOT"
 
-version := targetPlayReactiveMongoVersion
+version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
 scalaVersion := "2.11.1"
 
@@ -24,5 +26,10 @@ resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/reposit
 				    "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
 
 jacoco.settings
+
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
+publishTo := Some("Cloudbees releases" at "https://repository-themillhousegroup.forge.cloudbees.com/"+ "release")
+
 
 
