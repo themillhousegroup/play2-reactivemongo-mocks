@@ -76,7 +76,8 @@ trait CollectionFind extends MongoMockFacet {
       anyEC) answers { upTo =>
 
       futureResults.map { results =>
-        val subList = results.take(upTo.asInstanceOf[Int])
+        val size = upTo.asInstanceOf[Int]
+        val subList = if (size == 0) { results } else { results.take(size) }
         logger.debug(s"Returning ${subList} as the cursor collect")
         subList
       }
