@@ -1,7 +1,7 @@
 package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
-import play.api.libs.json.{JsString, JsObject}
+import play.api.libs.json.{JsBoolean, JsString, JsObject}
 import play.modules.reactivemongo.json.collection.JSONCollection
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
@@ -100,6 +100,79 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
       findOne(c, firstSingleFieldObject) must beEqualTo(searchedOption)
     }
   }
+
+  "find-operates-on (one) support" should {
+
+    "check find-operates-on call can return nothing when operating on empty dataSource" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq[JsObject]())
+      findOne(c, firstSingleFieldObject) must beNone
+    }
+
+    "check find-operates-on call can return nothing when no match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq[JsObject](firstSingleFieldObject))
+      findOne(c, secondSingleFieldObject) must beNone
+    }
+
+    "check find-operates-on call can return one thing - empty criteria" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq(firstSingleFieldObject))
+      findOne(c, JsObject(Nil)) must beSome(firstSingleFieldObject)
+    }
+
+    "check find-operates-on call can return one thing - exact match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq(firstSingleFieldObject))
+      findOne(c, JsObject(Nil)) must beSome(firstSingleFieldObject)
+    }
+
+    "check find-operates-on call can return one thing - partial match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, allFixtureObjects)
+      findOne(c, JsObject(Seq("topLevel" -> JsBoolean(true)))) must beSome(firstComplexObject)
+    }
+  }
+
+  "find-operates-on (cursor) support" should {
+    "check find-operates-on call to return a collection's headOption" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+
+      testSpec.givenMongoFindOperatesOn(c, returnValues)
+      findCursorHeadOption(c, JsObject(Nil)) must beEqualTo(returnValues.headOption)
+    }
+
+    "check find-operates-on call can return empty when no match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq[JsObject](firstSingleFieldObject))
+      findCursorHeadOption(c, secondSingleFieldObject) must beNone
+    }
+
+    "check find-operates-on call can return one thing - empty criteria" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, Seq(firstSingleFieldObject))
+      findCursorCollect(c, JsObject(Nil)) must containTheSameElementsAs(Seq(firstSingleFieldObject))
+    }
+
+    "check find-operates-on call can return one thing - exact match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, allFixtureObjects)
+      findCursorCollect(c, thirdSingleFieldObject) must containTheSameElementsAs(Seq(thirdSingleFieldObject))
+    }
+
+    "check find-operates-on call can return one thing - partial match" in new MockedCollectionScope {
+      testSpec.givenMongoFindOperatesOn(c, allFixtureObjects)
+      findCursorCollect(c, JsObject(Seq("topLevel" -> JsBoolean(true)))) must containTheSameElementsAs(Seq(firstComplexObject))
+    }
+
+    "be able to mock the find-any call to return a collection via collect() with upTo limit supplied" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject, firstSingleFieldObject, thirdSingleFieldObject, firstSingleFieldObject)
+
+      testSpec.givenMongoFindOperatesOn(c, returnValues)
+      findCursorCollect(c, firstSingleFieldObject, 2, false) must containTheSameElementsAs(Seq(firstSingleFieldObject, firstSingleFieldObject))
+    }
+
+    "be able to mock the find-any call to return a collection via collect() with upTo limit supplied as zero, meaning 'all'" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject, firstSingleFieldObject, thirdSingleFieldObject, firstSingleFieldObject)
+
+      testSpec.givenMongoFindOperatesOn(c, returnValues)
+      findCursorCollect(c, firstSingleFieldObject, 0, false) must containTheSameElementsAs(Seq(firstSingleFieldObject, firstSingleFieldObject, firstSingleFieldObject))
+    }
+  }
+
+
 
   "query builder support" should {
 

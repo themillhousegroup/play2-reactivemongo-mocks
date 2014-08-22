@@ -4,6 +4,12 @@ import reactivemongo.api.{Cursor, FailoverStrategy}
 import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
 import scala.collection.generic.CanBuildFrom
+import org.mockito.Mockito._
+import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.api.FailoverStrategy
+import scala.Some
+import play.modules.reactivemongo.json.collection.JSONQueryBuilder
+import play.api.libs.json.JsObject
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
@@ -30,6 +36,7 @@ trait CollectionFind extends MongoMockFacet {
     }
     spiedQB
   }
+
 
   // Return "self" in all cases
   private def setupQueryBuilder(spiedQB:JSONQueryBuilder) = {
@@ -94,6 +101,37 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer ( cursorAnswer ).when(spiedQB).cursor[JsObject]
   }
 
+  /**
+   * Rather than blindly returning the same thing(s) in response to a find() call,
+   * actually scan through "dataSource" in the same way as MongoDB would, finding matches to
+   * the find argument.
+   */
+  def givenMongoFindOperatesOn( targetCollection:JSONCollection, dataSource:Traversable[JsObject]) = {
+
+    val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
+
+    setupQueryBuilder(spiedQB)
+
+    targetCollection.find(anyJs)(anyJsWrites) answers { o =>
+      val criteria = o.asInstanceOf[JsObject]
+      val filteredContents = dataSource.filter { row =>
+        criteria.fields.forall { case (fieldName, fieldValue) =>
+          row.keys.contains(fieldName) &&
+          row.value(fieldName) == fieldValue
+        }
+      }
+      logger.debug(s"Returning queryBuilder that returns $filteredContents in response to find request using criteria $criteria")
+
+      setupOne(spiedQB, Future.successful(filteredContents))
+      setupCursor(spiedQB, Future.successful(filteredContents))
+      spiedQB
+    }
+
+    spiedQB
+  }
+
+
+
   def givenMongoFindFailsWith(targetCollection:JSONCollection, throwable:Throwable) = {
     val qb = givenMongoFindAnyReturnsNone(targetCollection)
     setupOne(qb, Future.failed(throwable))
@@ -112,6 +150,8 @@ trait CollectionFind extends MongoMockFacet {
     givenMongoCollectionFindAnyReturns(targetCollection, optResult.toSeq)
   def givenMongoFindAnyReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection, results:T[JsObject]) =
     givenMongoCollectionFindAnyReturns(targetCollection, results)
+
+
 
 
   protected def givenMongoCollectionFindExactReturns( targetCollection:JSONCollection,
