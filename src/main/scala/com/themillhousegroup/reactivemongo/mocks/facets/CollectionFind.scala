@@ -1,6 +1,6 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-import reactivemongo.api.{Cursor, FailoverStrategy}
+import reactivemongo.api.{ Cursor, FailoverStrategy }
 import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
 import scala.collection.generic.CanBuildFrom
@@ -12,17 +12,17 @@ import play.modules.reactivemongo.json.collection.JSONQueryBuilder
 import play.api.libs.json.JsObject
 
 //// Reactive Mongo plugin
-import play.modules.reactivemongo.json.collection.{JSONQueryBuilder, JSONCollection}
+import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
 import play.api.libs.json._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait CollectionFind extends MongoMockFacet {
 
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
-  private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection,
-                                                findMatcher: =>JsObject,
-                                                results:T[JsObject]):JSONQueryBuilder = {
+  private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
+    findMatcher: => JsObject,
+    results: T[JsObject]): JSONQueryBuilder = {
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
@@ -37,10 +37,9 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB
   }
 
-
   // Return "self" in all cases
-  private def setupQueryBuilder(spiedQB:JSONQueryBuilder) = {
-    val returnSelf = { a:Any =>
+  private def setupQueryBuilder(spiedQB: JSONQueryBuilder) = {
+    val returnSelf = { a: Any =>
       logger.trace(s"Returning queryBuilder that returns itself in response to sort/hint/projection request")
       spiedQB
     }
@@ -50,7 +49,7 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB.projection(anyJs) answers returnSelf
   }
 
-  private def setupOne[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, futureResults:Future[T[JsObject]]) = {
+  private def setupOne[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
     val oneAnswer = new Answer[Future[Option[JsObject]]] {
       def answer(invocation: InvocationOnMock): Future[Option[JsObject]] = {
 
@@ -60,10 +59,10 @@ trait CollectionFind extends MongoMockFacet {
         }
       }
     }
-    org.mockito.Mockito.doAnswer ( oneAnswer ).when(spiedQB).one[JsObject]
+    org.mockito.Mockito.doAnswer(oneAnswer).when(spiedQB).one[JsObject]
   }
 
-  private def setupCursor[T[J] <: Traversable[J]](spiedQB:JSONQueryBuilder, futureResults:Future[T[JsObject]]) = {
+  private def setupCursor[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
 
     val mockCursor = mock[Cursor[JsObject]]
 
@@ -76,20 +75,18 @@ trait CollectionFind extends MongoMockFacet {
 
     // TODO: The Enumerator (iteratee) API of Cursor?
 
-
     mockCursor.collect[Traversable](
       anyInt, anyBoolean)(
-      any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
-      anyEC) answers { upTo =>
+        any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
+        anyEC) answers { upTo =>
 
-      futureResults.map { results =>
-        val size = upTo.asInstanceOf[Int]
-        val subList = if (size == 0) { results } else { results.take(size) }
-        logger.debug(s"Returning ${subList} as the cursor collect")
-        subList
-      }
-    }
-
+          futureResults.map { results =>
+            val size = upTo.asInstanceOf[Int]
+            val subList = if (size == 0) { results } else { results.take(size) }
+            logger.debug(s"Returning ${subList} as the cursor collect")
+            subList
+          }
+        }
 
     val cursorAnswer = new Answer[Cursor[JsObject]] {
       def answer(invocation: InvocationOnMock): Cursor[JsObject] = {
@@ -98,7 +95,7 @@ trait CollectionFind extends MongoMockFacet {
       }
     }
 
-    org.mockito.Mockito.doAnswer ( cursorAnswer ).when(spiedQB).cursor[JsObject]
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject]
   }
 
   /**
@@ -106,7 +103,7 @@ trait CollectionFind extends MongoMockFacet {
    * actually scan through "dataSource" in the same way as MongoDB would, finding matches to
    * the find argument.
    */
-  def givenMongoFindOperatesOn( targetCollection:JSONCollection, dataSource:Traversable[JsObject]) = {
+  def givenMongoFindOperatesOn(targetCollection: JSONCollection, dataSource: Traversable[JsObject]) = {
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
@@ -115,9 +112,10 @@ trait CollectionFind extends MongoMockFacet {
     targetCollection.find(anyJs)(anyJsWrites) answers { o =>
       val criteria = o.asInstanceOf[JsObject]
       val filteredContents = dataSource.filter { row =>
-        criteria.fields.forall { case (fieldName, fieldValue) =>
-          row.keys.contains(fieldName) &&
-          row.value(fieldName) == fieldValue
+        criteria.fields.forall {
+          case (fieldName, fieldValue) =>
+            row.keys.contains(fieldName) &&
+              row.value(fieldName) == fieldValue
         }
       }
       logger.debug(s"Returning queryBuilder that returns $filteredContents in response to find request using criteria $criteria")
@@ -130,42 +128,37 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB
   }
 
-
-
-  def givenMongoFindFailsWith(targetCollection:JSONCollection, throwable:Throwable) = {
+  def givenMongoFindFailsWith(targetCollection: JSONCollection, throwable: Throwable) = {
     val qb = givenMongoFindAnyReturnsNone(targetCollection)
     setupOne(qb, Future.failed(throwable))
     setupCursor(qb, Future.failed(throwable))
   }
 
-  protected def givenMongoCollectionFindAnyReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection,
-                                                   results:T[JsObject]):JSONQueryBuilder =
+  protected def givenMongoCollectionFindAnyReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
+    results: T[JsObject]): JSONQueryBuilder =
     givenMongoCollectionFindReturns(targetCollection, anyJs, results)
 
-  def givenMongoFindAnyReturnsNone(targetCollection:JSONCollection) =
+  def givenMongoFindAnyReturnsNone(targetCollection: JSONCollection) =
     givenMongoCollectionFindAnyReturns(targetCollection, Seq[JsObject]())
-  def givenMongoFindAnyReturnsSome(targetCollection:JSONCollection, result:JsObject) =
+  def givenMongoFindAnyReturnsSome(targetCollection: JSONCollection, result: JsObject) =
     givenMongoCollectionFindAnyReturns(targetCollection, Seq(result))
-  def givenMongoFindAnyReturns(targetCollection:JSONCollection, optResult:Option[JsObject]) =
+  def givenMongoFindAnyReturns(targetCollection: JSONCollection, optResult: Option[JsObject]) =
     givenMongoCollectionFindAnyReturns(targetCollection, optResult.toSeq)
-  def givenMongoFindAnyReturns[T[J] <: Traversable[J]](targetCollection:JSONCollection, results:T[JsObject]) =
+  def givenMongoFindAnyReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection, results: T[JsObject]) =
     givenMongoCollectionFindAnyReturns(targetCollection, results)
 
-
-
-
-  protected def givenMongoCollectionFindExactReturns( targetCollection:JSONCollection,
-                                                      exactMatch:JsObject,
-                                                      result:Option[JsObject]):JSONQueryBuilder =
+  protected def givenMongoCollectionFindExactReturns(targetCollection: JSONCollection,
+    exactMatch: JsObject,
+    result: Option[JsObject]): JSONQueryBuilder =
     givenMongoCollectionFindReturns(targetCollection, org.mockito.Matchers.eq(exactMatch), result.toSeq)
 
-  def givenMongoFindExactReturnsNone(targetCollection:JSONCollection, exactMatch:JsObject) =
+  def givenMongoFindExactReturnsNone(targetCollection: JSONCollection, exactMatch: JsObject) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, None)
-  def givenMongoFindExactReturnsItself(targetCollection:JSONCollection, exactMatch:JsObject) =
+  def givenMongoFindExactReturnsItself(targetCollection: JSONCollection, exactMatch: JsObject) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, Some(exactMatch))
-  def givenMongoFindExactReturnsSome(targetCollection:JSONCollection, exactMatch:JsObject, result:JsObject) =
+  def givenMongoFindExactReturnsSome(targetCollection: JSONCollection, exactMatch: JsObject, result: JsObject) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, Some(result))
-  def givenMongoFindExactReturns(targetCollection:JSONCollection, exactMatch:JsObject, optResult:Option[JsObject]) =
+  def givenMongoFindExactReturns(targetCollection: JSONCollection, exactMatch: JsObject, optResult: Option[JsObject]) =
     givenMongoCollectionFindExactReturns(targetCollection, exactMatch, optResult)
 
 }

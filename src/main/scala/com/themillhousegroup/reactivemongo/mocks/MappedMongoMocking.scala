@@ -19,24 +19,24 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 trait MappedMongoMocking extends MongoMocks {
   this: org.specs2.mutable.Specification =>
 
-  val mockData:Map[String, Set[JsObject]]
+  val mockData: Map[String, Set[JsObject]]
 
   override lazy val mockDatabaseName = "mappedMongoMockDB"
 
-
-  val collectionsByName:Map[String, JSONCollection] = mockData.map { case (k, v) =>
-    k -> mockedCollection(k)
+  val collectionsByName: Map[String, JSONCollection] = mockData.map {
+    case (k, v) =>
+      k -> mockedCollection(k)
   }.toMap
 
+  mockData.foreach {
+    case (collName, contents) =>
+      val coll = collectionsByName(collName)
 
-  mockData.foreach { case (collName, contents) =>
-    val coll = collectionsByName(collName)
+      // Set up the default behaviour if we don't match: return a None
+      givenMongoFindAnyReturnsNone(coll)
 
-    // Set up the default behaviour if we don't match: return a None
-    givenMongoFindAnyReturnsNone(coll)
-
-    // Now override with specific exact-match cases:
-    contents.foreach ( givenMongoFindExactReturnsItself(coll, _) )
+      // Now override with specific exact-match cases:
+      contents.foreach(givenMongoFindExactReturnsItself(coll, _))
   }
 
 }

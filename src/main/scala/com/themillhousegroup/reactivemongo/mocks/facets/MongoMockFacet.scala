@@ -1,22 +1,20 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
 import org.specs2.mock.Mockito
-import reactivemongo.core.commands.{GetLastError, LastError}
+import reactivemongo.core.commands.{ GetLastError, LastError }
 import org.mockito.Matchers
-import play.api.libs.json.{JsObject, Writes}
+import play.api.libs.json.{ JsObject, Writes }
 import scala.concurrent.ExecutionContext
-
 
 trait MongoMockFacet extends Mockito with Logging {
 
-  protected def mockResult(ok:Boolean):LastError = {
+  protected def mockResult(ok: Boolean): LastError = {
     val mockResult = mock[LastError]
     mockResult.ok returns ok
     mockResult
   }
 
-
-  protected def bool2Success(ok:Boolean) = if (ok) "success" else "failure"
+  protected def bool2Success(ok: Boolean) = if (ok) "success" else "failure"
 
   // Useful additional matchers:
 
