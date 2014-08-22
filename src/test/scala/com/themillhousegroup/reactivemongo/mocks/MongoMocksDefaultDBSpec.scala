@@ -4,9 +4,7 @@ import org.specs2.mutable.Specification
 import scala.concurrent.duration.Duration
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 
-
 class MongoMocksDefaultDBSpec extends Specification with CommonMongoTests {
-
 
   "The DefaultDB member of the MongoMocks trait" should {
     val testSpec = new Specification with MongoMocks
@@ -23,7 +21,6 @@ class MongoMocksDefaultDBSpec extends Specification with CommonMongoTests {
 
   "The DefaultDB member of the MongoMocks trait, with name overridden" should {
 
-
     val testDBName = "new db name"
 
     val testSpec = new Specification with MongoMocks {
@@ -38,6 +35,5 @@ class MongoMocksDefaultDBSpec extends Specification with CommonMongoTests {
       testSpec.mockDB.name must beEqualTo(testDBName)
     }
   }
-
 
 }

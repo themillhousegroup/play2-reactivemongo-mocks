@@ -1,7 +1,7 @@
 package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
-import play.api.libs.json.{JsBoolean, JsString, JsObject}
+import play.api.libs.json.{ JsBoolean, JsString, JsObject }
 import play.modules.reactivemongo.json.collection.JSONCollection
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
@@ -11,7 +11,7 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
 
   "The mockedCollection facility" should {
 
-    "return null if no named collection matches" in new MockedCollectionScope  {
+    "return null if no named collection matches" in new MockedCollectionScope {
       testSpec.mockDB.collection("bar") must beNull
     }
 
@@ -31,7 +31,7 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
     "be able to mock the find-any call to return one thing" in new MockedCollectionScope {
 
       testSpec.givenMongoFindAnyReturnsSome(c, firstSingleFieldObject)
-      findOne(c, JsObject(Nil))  must beSome(firstSingleFieldObject)
+      findOne(c, JsObject(Nil)) must beSome(firstSingleFieldObject)
     }
 
     "be able to mock the find-any call to return an Option" in new MockedCollectionScope {
@@ -172,8 +172,6 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
     }
   }
 
-
-
   "query builder support" should {
 
     class QBTestScope extends MockedCollectionScope {
@@ -182,7 +180,6 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
         c.find(firstSingleFieldObject)
       }
     }
-
 
     "permit a sort order to be specified without error" in new QBTestScope {
       qb.sort(secondSingleFieldObject) must beEqualTo(qb)

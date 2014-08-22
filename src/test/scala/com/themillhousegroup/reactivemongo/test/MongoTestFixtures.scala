@@ -1,6 +1,6 @@
 package com.themillhousegroup.reactivemongo.test
 
-import play.api.libs.json.{JsBoolean, JsNumber, JsObject}
+import play.api.libs.json.{ JsBoolean, JsNumber, JsObject }
 
 trait MongoTestFixtures {
   val testThrowable = new UnsupportedOperationException("Test error")

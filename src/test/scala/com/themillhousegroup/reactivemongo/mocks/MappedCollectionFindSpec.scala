@@ -1,7 +1,7 @@
 package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
-import play.api.libs.json.{JsNumber, JsString, JsObject}
+import play.api.libs.json.{ JsNumber, JsString, JsObject }
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.concurrent.Await
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
@@ -10,15 +10,14 @@ import org.specs2.specification.Scope
 // Get implicit conversions into scope
 import play.modules.reactivemongo.json.collection._
 
+class MappedCollectionFindSpec extends Specification with CommonMongoTests {
 
-class MappedCollectionFindSpec extends Specification  with CommonMongoTests {
-
-  case class MSpec(val mockData:Map[String, Set[JsObject]]) extends Specification with MappedMongoMocking
+  case class MSpec(val mockData: Map[String, Set[JsObject]]) extends Specification with MappedMongoMocking
 
   "The mockedCollection facility" should {
 
-    class NamedCollectionScope(collectionNames:String*) extends Scope {
-      val testSpec = MSpec(collectionNames.map ( _ -> Set[JsObject]()).toMap)
+    class NamedCollectionScope(collectionNames: String*) extends Scope {
+      val testSpec = MSpec(collectionNames.map(_ -> Set[JsObject]()).toMap)
     }
 
     "return null if no named collection matches" in new NamedCollectionScope("foo") {
@@ -34,14 +33,14 @@ class MappedCollectionFindSpec extends Specification  with CommonMongoTests {
 
       testSpec.mockDB.collection[JSONCollection]("bar") must not beNull
 
-      testSpec.mockDB.collection[JSONCollection]("baz") must  beNull
+      testSpec.mockDB.collection[JSONCollection]("baz") must beNull
     }
 
   }
 
   "find-in-collection" should {
 
-    class NameValueCollectionScope(name:String, values:JsObject*) extends Scope {
+    class NameValueCollectionScope(name: String, values: JsObject*) extends Scope {
       val testSpec = MSpec(Map(name -> values.toSet))
     }
 
@@ -59,20 +58,20 @@ class MappedCollectionFindSpec extends Specification  with CommonMongoTests {
       Await.result(qb.one[JsObject], shortWait) must beNone
     }
 
-//    "be able to mock the find call to return something" in new MockedCollectionScope {
-//      val searchedThing = JsString("thing")
-//
-//      testSpec.givenMongoFindAnyReturnsSome(testSpec.coll, searchedThing)
-//      val qb = testSpec.coll.find(JsObject(Nil))
-//      Await.result(qb.one[JsObject], shortWait) must beSome(searchedThing)
-//    }
-//
-//    "be able to mock the find call to return an Option" in new MockedCollectionScope {
-//      val searchedOption = Some(JsString("thing"))
-//
-//      testSpec.givenMongoFindAnyReturns(testSpec.coll, searchedOption)
-//      val qb = testSpec.coll.find(JsObject(Nil))
-//      Await.result(qb.one[JsObject], shortWait) must beEqualTo(searchedOption)
-//    }
+    //    "be able to mock the find call to return something" in new MockedCollectionScope {
+    //      val searchedThing = JsString("thing")
+    //
+    //      testSpec.givenMongoFindAnyReturnsSome(testSpec.coll, searchedThing)
+    //      val qb = testSpec.coll.find(JsObject(Nil))
+    //      Await.result(qb.one[JsObject], shortWait) must beSome(searchedThing)
+    //    }
+    //
+    //    "be able to mock the find call to return an Option" in new MockedCollectionScope {
+    //      val searchedOption = Some(JsString("thing"))
+    //
+    //      testSpec.givenMongoFindAnyReturns(testSpec.coll, searchedOption)
+    //      val qb = testSpec.coll.find(JsObject(Nil))
+    //      Await.result(qb.one[JsObject], shortWait) must beEqualTo(searchedOption)
+    //    }
   }
 }
