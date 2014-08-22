@@ -31,5 +31,7 @@ credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 publishTo := Some("Cloudbees releases" at "https://repository-themillhousegroup.forge.cloudbees.com/"+ "release")
 
+scalariformSettings
+
 
 
