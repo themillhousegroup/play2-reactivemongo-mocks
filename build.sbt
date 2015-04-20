@@ -1,11 +1,8 @@
 name := "play2-reactivemongo-mocks"
 
-lazy val mocksVersion := s"${sys.props.getOrElse("build.majorMinor", "0.2")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
+val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.2")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
-
-// lazy val targetPlayReactiveMongoVersion = "0.11.0-SNAPSHOT"
-
-lazy val targetPlayReactiveMongoVersion = "0.10.5.0.akka23"
+val targetPlayReactiveMongoVersion = "0.10.5.0.akka23"
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
