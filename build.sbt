@@ -1,14 +1,16 @@
 name := "play2-reactivemongo-mocks"
 
-lazy val mocksVersion = "0.1.0"
+lazy val mocksVersion = "0.2.0"
 
-lazy val targetPlayReactiveMongoVersion = "0.11.0-SNAPSHOT"
+// lazy val targetPlayReactiveMongoVersion = "0.11.0-SNAPSHOT"
+
+lazy val targetPlayReactiveMongoVersion = "0.10.5.0.akka23"
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
-crossScalaVersions := Seq("2.11.1", "2.10.4")
+crossScalaVersions := Seq("2.11.2", "2.10.4")
 
 
 organization := "com.themillhousegroup"
@@ -17,7 +19,7 @@ libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.2",
     "org.mockito"           %   "mockito-all"           % "1.9.0",
     "org.reactivemongo"     %%  "play2-reactivemongo"   % targetPlayReactiveMongoVersion,
-    "com.typesafe.play"     %% "play"                   % "2.3.0"       % "provided",
+    "com.typesafe.play"     %% "play"                   % "2.3.8"       % "provided",
     "org.specs2"            %% "specs2"                 % "2.3.12"
 )
 
