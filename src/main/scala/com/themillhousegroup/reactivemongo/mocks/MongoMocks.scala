@@ -41,7 +41,11 @@ trait MongoMocks extends Mockito with Logging
             mockCollection
           }
 
+    // Add some sensible responses to standard methods:
     mockCollection.name returns s"$name (mock)"
+    mockCollection.fullCollectionName returns s"mock.${name}"
+    mockCollection.db returns mockDB
+
     mockCollection
   }
 }
