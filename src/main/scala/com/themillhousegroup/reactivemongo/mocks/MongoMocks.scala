@@ -40,6 +40,8 @@ trait MongoMocks extends Mockito with Logging
             logger.debug(s"Returning mocked $name collection")
             mockCollection
           }
+
+    mockCollection.name returns s"$name (mock)"
     mockCollection
   }
 }
