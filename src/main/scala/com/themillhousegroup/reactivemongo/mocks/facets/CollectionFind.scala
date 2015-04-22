@@ -59,7 +59,8 @@ trait CollectionFind extends MongoMockFacet {
         }
       }
     }
-    org.mockito.Mockito.doAnswer(oneAnswer).when(spiedQB).one[JsObject]
+    org.mockito.Mockito.doAnswer(oneAnswer).when(spiedQB).one[JsObject](anyJsReads, anyEC)
+    org.mockito.Mockito.doAnswer(oneAnswer).when(spiedQB).one[JsObject](anyReadPreference)(anyJsReads, anyEC)
   }
 
   private def setupCursor[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
@@ -95,7 +96,8 @@ trait CollectionFind extends MongoMockFacet {
       }
     }
 
-    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject]
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyJsReads, anyEC)
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference)(anyJsReads, anyEC)
   }
 
   /**
