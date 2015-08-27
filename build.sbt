@@ -15,11 +15,11 @@ publishArtifact in (Compile, packageDoc) := false
 organization := "com.themillhousegroup"
 
 libraryDependencies ++= Seq(
-    "ch.qos.logback" % "logback-classic" % "1.1.2",
-    "org.mockito"           %   "mockito-all"           % "1.9.5",
+    "ch.qos.logback" % "logback-classic" % "1.1.3",
+    "org.mockito"           %   "mockito-all"           % "1.10.19",
     "org.reactivemongo"     %%  "play2-reactivemongo"   % targetPlayReactiveMongoVersion,
-    "com.typesafe.play"     %% "play"                   % "2.3.8"       % "provided",
-    "org.specs2"            %% "specs2"                 % "2.3.12"
+    "com.typesafe.play"     %% "play"                   % "2.3.10"       % "provided",
+    "org.specs2"            %% "specs2"                 % "2.3.13"
 )
 
 resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
