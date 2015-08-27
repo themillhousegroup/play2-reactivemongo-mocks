@@ -16,7 +16,7 @@ organization := "com.themillhousegroup"
 
 libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.2",
-    "org.mockito"           %   "mockito-all"           % "1.9.0",
+    "org.mockito"           %   "mockito-all"           % "1.9.5",
     "org.reactivemongo"     %%  "play2-reactivemongo"   % targetPlayReactiveMongoVersion,
     "com.typesafe.play"     %% "play"                   % "2.3.8"       % "provided",
     "org.specs2"            %% "specs2"                 % "2.3.12"
