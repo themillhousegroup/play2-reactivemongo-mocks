@@ -6,9 +6,9 @@ val targetPlayReactiveMongoVersion = "0.10.5.0.akka23"
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.7"
 
-crossScalaVersions := Seq("2.11.2", "2.10.4")
+crossScalaVersions := Seq("2.11.7", "2.10.5")
 
 publishArtifact in (Compile, packageDoc) := false
 
