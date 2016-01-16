@@ -2,18 +2,17 @@ package com.themillhousegroup.reactivemongo.test
 
 import scala.concurrent.duration.Duration
 import com.themillhousegroup.reactivemongo.mocks.facets.Logging
-import play.api.libs.json.{ JsNumber, JsObject }
-import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.api.commands.WriteResult
+
 import scala.concurrent.{ Future, Await }
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.specs2.matcher._
-import play.modules.reactivemongo.json.collection.JSONCollection
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsNumber
 import org.specs2.specification.Scope
 import org.specs2.mutable.Specification
 import com.themillhousegroup.reactivemongo.mocks.MongoMocks
-import reactivemongo.core.commands.LastError
+import play.modules.reactivemongo.json.collection.JSONCollection
+import play.api.libs.json.JsObject
+import play.modules.reactivemongo.json._
 
 trait CommonMongoTests extends Logging
     with MustThrownMatchers
@@ -53,7 +52,7 @@ trait CommonMongoTests extends Logging
     Await.result(qb.cursor[JsObject].collect[List](upTo, stopOnErr), shortWait)
   }
 
-  def resultOf(op: => Future[LastError]): Boolean = {
+  def resultOf(op: => Future[WriteResult]): Boolean = {
     Await.result(op, shortWait).ok
   }
 }

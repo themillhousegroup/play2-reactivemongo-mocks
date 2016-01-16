@@ -2,7 +2,7 @@ package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
 import play.api.libs.json.{ JsNumber, JsString, JsObject }
-import play.modules.reactivemongo.json.collection.JSONCollection
+import play.modules.reactivemongo.json._
 import scala.concurrent.Await
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope

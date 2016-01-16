@@ -3,9 +3,9 @@ package com.themillhousegroup.reactivemongo.mocks
 import org.specs2.mutable.Specification
 import play.api.libs.json.{ JsBoolean, JsString, JsObject }
 import play.modules.reactivemongo.json.collection.JSONCollection
+import play.modules.reactivemongo.json._
+
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
-import org.specs2.specification.Scope
-import scala.concurrent.Await
 
 class CollectionFindSpec extends Specification with CommonMongoTests {
 

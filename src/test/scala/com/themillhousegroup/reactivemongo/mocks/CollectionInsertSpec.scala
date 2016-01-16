@@ -2,6 +2,7 @@ package com.themillhousegroup.reactivemongo.mocks
 
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.mutable.Specification
+import play.modules.reactivemongo.json._
 
 class CollectionInsertSpec extends Specification with CommonMongoTests {
 
