@@ -2,13 +2,11 @@ name := "play2-reactivemongo-mocks"
 
 val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.3")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
-val targetPlayReactiveMongoVersion = "0.10.5.0.akka23"
+val targetPlayReactiveMongoVersion = "0.11.9"
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
 scalaVersion := "2.11.7"
-
-crossScalaVersions := Seq("2.11.7", "2.10.5")
 
 publishArtifact in (Compile, packageDoc) := false
 
@@ -18,7 +16,7 @@ libraryDependencies ++= Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.3",
     "org.mockito"           %   "mockito-all"           % "1.10.19",
     "org.reactivemongo"     %%  "play2-reactivemongo"   % targetPlayReactiveMongoVersion,
-    "com.typesafe.play"     %% "play"                   % "2.3.10"       % "provided",
+    "com.typesafe.play"     %% "play"                   % "2.4.6"       % "provided",
     "org.specs2"            %% "specs2"                 % "2.3.13"
 )
 
