@@ -18,16 +18,16 @@ trait CollectionUpdate extends MongoMockFacet {
     // Nothing to mock an answer for - it's unchecked - but we record the update to be useful
     targetCollection.uncheckedUpdate(
       selectorMatcher, updateMatcher, anyBoolean, anyBoolean)(
-        anyJsWrites, anyJsWrites) answers { o =>
+        anyPackWrites, anyPackWrites) answers { o =>
           uncheckedUpdates = uncheckedUpdates :+ o
           logger.debug(s"unchecked update of $o, recorded for verification (${uncheckedUpdates.size})")
         }
 
     targetCollection.update(
       selectorMatcher, updateMatcher, anyWriteConcern, anyBoolean, anyBoolean)(
-        anyJsWrites, anyJsWrites, anyEC) answers { o =>
+        anyPackWrites, anyPackWrites, anyEC) answers { o =>
           logger.debug(s"Update of object $o will be considered a ${bool2Success(ok)}")
-          Future.successful(mockResult(ok))
+          Future.successful(mockUpdateResult(ok))
         }
   }
 

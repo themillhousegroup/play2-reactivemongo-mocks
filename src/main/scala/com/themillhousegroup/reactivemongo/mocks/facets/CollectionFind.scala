@@ -30,7 +30,7 @@ trait CollectionFind extends MongoMockFacet {
     setupOne(spiedQB, Future.successful(results))
     setupCursor(spiedQB, Future.successful(results))
 
-    targetCollection.find(findMatcher)(anyJsWrites) answers { _ =>
+    targetCollection.find(findMatcher)(anyPackWrites) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $results in response to find request")
       spiedQB
     }
@@ -96,8 +96,8 @@ trait CollectionFind extends MongoMockFacet {
       }
     }
 
-    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyJsReads, anyEC)
-    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference)(anyJsReads, anyEC)
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyJsReads, anyEC, anyCursorProducer)
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference)(anyJsReads, anyEC, anyCursorProducer)
   }
 
   /**
@@ -111,7 +111,7 @@ trait CollectionFind extends MongoMockFacet {
 
     setupQueryBuilder(spiedQB)
 
-    targetCollection.find(anyJs)(anyJsWrites) answers { o =>
+    targetCollection.find(anyJs)(anyPackWrites) answers { o =>
       val criteria = o.asInstanceOf[JsObject]
       val filteredContents = dataSource.filter { row =>
         criteria.fields.forall {
