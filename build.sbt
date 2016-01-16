@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
     "org.mockito"           %  "mockito-all"            % "1.10.19",
     "org.reactivemongo"     %% "play2-reactivemongo"    % targetPlayReactiveMongoVersion,
     "com.typesafe.play"     %% "play"                   % "2.4.6"                           % "provided",
+    "io.netty"              %  "netty"                  % "3.10.4.Final"                    % "provided",
     "org.specs2"            %% "specs2"                 % "2.3.13"
 )
 
