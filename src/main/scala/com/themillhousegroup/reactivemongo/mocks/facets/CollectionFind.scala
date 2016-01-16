@@ -96,8 +96,8 @@ trait CollectionFind extends MongoMockFacet {
       }
     }
 
-    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyJsReads, anyEC, anyCursorProducer)
-    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference)(anyJsReads, anyEC, anyCursorProducer)
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyPackReads, anyEC, anyCursorProducer)
+    org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference, anyBoolean)(anyPackReads, anyEC, anyCursorProducer)
   }
 
   /**

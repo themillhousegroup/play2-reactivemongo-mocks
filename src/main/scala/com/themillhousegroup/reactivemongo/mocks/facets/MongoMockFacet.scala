@@ -36,6 +36,8 @@ trait MongoMockFacet extends Mockito with Logging {
 
   def anyJsReads = Matchers.any[Reads[JsObject]]
 
+  def anyPackReads = Matchers.any[JSONSerializationPack.Reader[JsObject]]
+
   def anyJsWrites = Matchers.any[Writes[JsObject]]
 
   def anyPackWrites = Matchers.any[JSONSerializationPack.Writer[JsObject]]

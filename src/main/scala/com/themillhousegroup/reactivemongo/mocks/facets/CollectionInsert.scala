@@ -23,7 +23,7 @@ trait CollectionInsert extends MongoMockFacet {
       logger.debug(s"unchecked insert of $o, recorded for verification (${uncheckedInserts.size})")
     }
 
-    targetCollection.insert(insertMatcher)(anyPackWrites, anyEC) answers { o =>
+    targetCollection.insert(insertMatcher, anyWriteConcern)(anyPackWrites, anyEC) answers { o =>
       logger.debug(s"Insert of object $o will be considered a ${bool2Success(ok)}")
       Future.successful(mockResult(ok))
     }
