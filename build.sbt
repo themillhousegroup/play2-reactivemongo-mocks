@@ -8,6 +8,8 @@ version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
 scalaVersion := "2.11.7"
 
+publishArtifact in (Compile, packageDoc) := false
+
 organization := "com.themillhousegroup"
 
 libraryDependencies ++= Seq(
