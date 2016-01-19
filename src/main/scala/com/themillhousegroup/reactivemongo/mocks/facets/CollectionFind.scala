@@ -1,12 +1,11 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-import reactivemongo.api.{ Cursor, FailoverStrategy }
+import reactivemongo.api.{QueryOpts, Cursor, FailoverStrategy}
 import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
 import scala.collection.generic.CanBuildFrom
 import org.mockito.Mockito._
 import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.api.FailoverStrategy
 import scala.Some
 import play.modules.reactivemongo.json.collection.JSONQueryBuilder
 import play.api.libs.json.JsObject
@@ -40,13 +39,17 @@ trait CollectionFind extends MongoMockFacet {
   // Return "self" in all cases
   private def setupQueryBuilder(spiedQB: JSONQueryBuilder) = {
     val returnSelf = { a: Any =>
-      logger.trace(s"Returning queryBuilder that returns itself in response to sort/hint/projection request")
+      logger.trace(s"Returning queryBuilder that returns itself in response to sort/hint/projection etc request")
       spiedQB
     }
 
     spiedQB.sort(anyJs) answers returnSelf
     spiedQB.hint(anyJs) answers returnSelf
     spiedQB.projection(anyJs) answers returnSelf
+    spiedQB.options(any[QueryOpts]) answers returnSelf
+    spiedQB.snapshot(anyBoolean) answers returnSelf
+    spiedQB.comment(anyString) answers returnSelf
+    spiedQB.maxTimeMs(anyLong) answers returnSelf
   }
 
   private def setupOne[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
