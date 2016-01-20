@@ -28,7 +28,7 @@ Bring in the library by adding the following to your Play project's ```build.sbt
 
 ```
    libraryDependencies ++= Seq(
-     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.9_0.4.14"
+     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.9_0.4.20"
    )
 
 ```
