@@ -28,8 +28,8 @@ trait CollectionFind extends MongoMockFacet {
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
     setupQueryBuilder(spiedQB)
-    setupOne(spiedQB, Future.successful(results))
-    setupCursor(spiedQB, Future.successful(results))
+    setupOne(spiedQB, Right(results))
+    setupCursor(spiedQB, Right(results))
 
     targetCollection.find(findMatcher)(anyPackWrites) answers { _ =>
       logger.debug(s"Returning queryBuilder that returns $results in response to find request")
@@ -54,7 +54,11 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB.maxTimeMs(anyLong) answers returnSelf
   }
 
-  private def setupOne[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
+
+
+  private def setupOne[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, throwableOrResults: Either[Throwable, T[JsObject]]) = {
+    val futureResults = eitherToFutureResult(throwableOrResults)
+
     val oneAnswer = new Answer[Future[Option[JsObject]]] {
       def answer(invocation: InvocationOnMock): Future[Option[JsObject]] = {
 
@@ -68,8 +72,8 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer(oneAnswer).when(spiedQB).one[JsObject](anyReadPreference)(anyJsReads, anyEC)
   }
 
-  private def setupCursor[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, futureResults: Future[T[JsObject]]) = {
-
+  private def setupCursor[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, throwableOrResults: Either[Throwable, T[JsObject]]) = {
+    val futureResults = eitherToFutureResult(throwableOrResults)
     val mockCursor = mock[Cursor[JsObject]]
 
     mockCursor.headOption answers { _ =>
@@ -80,7 +84,7 @@ trait CollectionFind extends MongoMockFacet {
     }
 
     // The Enumerator (iteratee) API of Cursor
-    setupCursorEnumeratorMocks(mockCursor, futureResults)
+    setupCursorEnumeratorMocks(mockCursor, throwableOrResults)
 
     mockCursor.collect[Traversable](
       anyInt, anyBoolean)(
@@ -106,7 +110,7 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference, anyBoolean)(anyPackReads, anyEC, anyCursorProducer)
   }
 
-  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], futureResults: Future[T[JsObject]]) = {
+  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], throwableOrResults: Either[Throwable, T[JsObject]]) = {
     val mockEnumerator = mock[Enumerator[JsObject]]
     val mockBulkEnumerator = mock[Enumerator[Iterator[JsObject]]]
     val mockResponseEnumerator = mock[Enumerator[Response]]
@@ -116,6 +120,12 @@ trait CollectionFind extends MongoMockFacet {
     mockCursor.enumerateBulks(anyInt, anyBoolean)(anyEC) returns mockBulkEnumerator
     mockCursor.enumerateResponses(anyInt, anyBoolean)(anyEC) returns mockResponseEnumerator
     mockCursor.rawEnumerateResponses(anyInt)(anyEC) returns mockResponseEnumerator
+
+   // mockEnumerator = Enumerator.
+  }
+
+  private def eitherToFutureResult[T[J] <: Traversable[J]](throwableOrResults: Either[Throwable, T[JsObject]]):Future[T[JsObject]] = {
+    throwableOrResults.fold(t => Future.failed(t), coll => Future.successful(coll))
   }
 
   /**
@@ -140,8 +150,8 @@ trait CollectionFind extends MongoMockFacet {
       }
       logger.debug(s"Returning queryBuilder that returns $filteredContents in response to find request using criteria $criteria")
 
-      setupOne(spiedQB, Future.successful(filteredContents))
-      setupCursor(spiedQB, Future.successful(filteredContents))
+      setupOne(spiedQB, Right(filteredContents))
+      setupCursor(spiedQB, Right(filteredContents))
       spiedQB
     }
 
@@ -150,8 +160,8 @@ trait CollectionFind extends MongoMockFacet {
 
   def givenMongoFindFailsWith(targetCollection: JSONCollection, throwable: Throwable) = {
     val qb = givenMongoFindAnyReturnsNone(targetCollection)
-    setupOne(qb, Future.failed(throwable))
-    setupCursor(qb, Future.failed(throwable))
+    setupOne(qb, Left(throwable))
+    setupCursor(qb, Left(throwable))
   }
 
   protected def givenMongoCollectionFindAnyReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
