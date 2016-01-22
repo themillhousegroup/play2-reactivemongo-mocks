@@ -9,6 +9,8 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import play.modules.reactivemongo.json.collection.JSONQueryBuilder
 import play.api.libs.json.JsObject
+import play.api.libs.iteratee.Enumerator
+import reactivemongo.core.protocol.Response
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
@@ -105,7 +107,15 @@ trait CollectionFind extends MongoMockFacet {
   }
 
   private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], futureResults: Future[T[JsObject]]) = {
+    val mockEnumerator = mock[Enumerator[JsObject]]
+    val mockBulkEnumerator = mock[Enumerator[Iterator[JsObject]]]
+    val mockResponseEnumerator = mock[Enumerator[Response]]
 
+
+    mockCursor.enumerate(anyInt, anyBoolean)(anyEC) returns mockEnumerator
+    mockCursor.enumerateBulks(anyInt, anyBoolean)(anyEC) returns mockBulkEnumerator
+    mockCursor.enumerateResponses(anyInt, anyBoolean)(anyEC) returns mockResponseEnumerator
+    mockCursor.rawEnumerateResponses(anyInt)(anyEC) returns mockResponseEnumerator
   }
 
   /**
