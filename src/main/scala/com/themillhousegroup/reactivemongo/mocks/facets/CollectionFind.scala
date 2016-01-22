@@ -77,7 +77,8 @@ trait CollectionFind extends MongoMockFacet {
       }
     }
 
-    // TODO: The Enumerator (iteratee) API of Cursor?
+    // The Enumerator (iteratee) API of Cursor
+    setupCursorEnumeratorMocks(mockCursor, futureResults)
 
     mockCursor.collect[Traversable](
       anyInt, anyBoolean)(
@@ -101,6 +102,10 @@ trait CollectionFind extends MongoMockFacet {
 
     org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyPackReads, anyEC, anyCursorProducer)
     org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference, anyBoolean)(anyPackReads, anyEC, anyCursorProducer)
+  }
+
+  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], futureResults: Future[T[JsObject]]) = {
+
   }
 
   /**
