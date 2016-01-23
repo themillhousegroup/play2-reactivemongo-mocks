@@ -110,18 +110,22 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference, anyBoolean)(anyPackReads, anyEC, anyCursorProducer)
   }
 
-  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], throwableOrResults: Either[Throwable, T[JsObject]]) = {
-    val mockEnumerator = mock[Enumerator[JsObject]]
-    val mockBulkEnumerator = mock[Enumerator[Iterator[JsObject]]]
-    val mockResponseEnumerator = mock[Enumerator[Response]]
-
-
-    mockCursor.enumerate(anyInt, anyBoolean)(anyEC) returns mockEnumerator
-    mockCursor.enumerateBulks(anyInt, anyBoolean)(anyEC) returns mockBulkEnumerator
-    mockCursor.enumerateResponses(anyInt, anyBoolean)(anyEC) returns mockResponseEnumerator
-    mockCursor.rawEnumerateResponses(anyInt)(anyEC) returns mockResponseEnumerator
-
-   // mockEnumerator = Enumerator.
+  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], throwableOrResults: Either[Throwable, T[JsObject]]):Unit = {
+    val (enumerator:Enumerator[JsObject], bulkEnumerator:Enumerator[Iterator[JsObject]]) = if (throwableOrResults.isLeft) {
+      // TODO throw the throwable when the Enumerator is accessed:
+      (mock[Enumerator[JsObject]], mock[Enumerator[Iterator[JsObject]]])
+    } else {
+      val resultsProjection = throwableOrResults.right
+      resultsProjection.foreach { results =>
+        val iterableOfResults = Seq(results)
+        (Enumerator.enumerate(results), Enumerator.enumerate(iterableOfResults))
+      }
+    }
+    val responseEnumerator = mock[Enumerator[Response]] // Not mocking this one beyond the basics
+    mockCursor.enumerate(anyInt, anyBoolean)(anyEC) returns enumerator
+    mockCursor.enumerateBulks(anyInt, anyBoolean)(anyEC) returns bulkEnumerator
+    mockCursor.enumerateResponses(anyInt, anyBoolean)(anyEC) returns responseEnumerator
+    mockCursor.rawEnumerateResponses(anyInt)(anyEC) returns responseEnumerator
   }
 
   private def eitherToFutureResult[T[J] <: Traversable[J]](throwableOrResults: Either[Throwable, T[JsObject]]):Future[T[JsObject]] = {
