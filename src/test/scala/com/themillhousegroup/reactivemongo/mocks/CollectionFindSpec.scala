@@ -74,7 +74,7 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
   }
 
   "find-any (cursor; enumerator) support" should {
-    "be able to mock the find-any call to return a collection via an Enumerator" in new MockedCollectionScope {
+    "be able to mock the find-any call to return a collection's headOption via an Enumerator" in new MockedCollectionScope {
       val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
 
       testSpec.givenMongoFindAnyReturns(c, returnValues)
@@ -82,6 +82,16 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
 
       val headCollector = Iteratee.head[JsObject]
       waitFor(e.run(headCollector)) must beEqualTo(returnValues.headOption)
+    }
+
+    "be able to mock the find-any call to return a collection via an Enumerator" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+
+      testSpec.givenMongoFindAnyReturns(c, returnValues)
+      val e = findCursorEnumerator(c, JsObject(Nil), 2, false)
+
+      val chunkCollector = Iteratee.getChunks[JsObject]
+      waitFor(e.run(chunkCollector)) must beEqualTo(returnValues)
     }
   }
 
