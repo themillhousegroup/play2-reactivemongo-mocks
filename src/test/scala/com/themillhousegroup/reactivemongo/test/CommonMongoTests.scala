@@ -13,6 +13,7 @@ import com.themillhousegroup.reactivemongo.mocks.MongoMocks
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.libs.json.JsObject
 import play.modules.reactivemongo.json._
+import reactivemongo.api.ReadPreference
 
 trait CommonMongoTests extends Logging
     with MustThrownMatchers
@@ -40,7 +41,7 @@ trait CommonMongoTests extends Logging
 
   def findCursorHeadOption(c: JSONCollection, thingToFind: JsObject): Option[JsObject] = {
     val qb = c.find(thingToFind)
-    Await.result(qb.cursor[JsObject].headOption, shortWait)
+    Await.result(qb.cursor[JsObject](ReadPreference.nearest).headOption, shortWait)
   }
 
   def findCursorCollect(c: JSONCollection, thingToFind: JsObject): List[JsObject] = {
@@ -49,7 +50,12 @@ trait CommonMongoTests extends Logging
 
   def findCursorCollect(c: JSONCollection, thingToFind: JsObject, upTo: Int, stopOnErr: Boolean): List[JsObject] = {
     val qb = c.find(thingToFind)
-    Await.result(qb.cursor[JsObject].collect[List](upTo, stopOnErr), shortWait)
+    Await.result(qb.cursor[JsObject](ReadPreference.nearest).collect[List](upTo, stopOnErr), shortWait)
+  }
+
+  def findCursorEnumerator(c: JSONCollection, thingToFind: JsObject, upTo: Int, stopOnErr: Boolean): List[JsObject] = {
+    val qb = c.find(thingToFind)
+    Await.result(qb.cursor[JsObject](ReadPreference.nearest).collect[List](upTo, stopOnErr), shortWait)
   }
 
   def resultOf(op: => Future[WriteResult]): Boolean = {
