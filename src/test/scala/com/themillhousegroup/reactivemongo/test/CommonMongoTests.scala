@@ -14,6 +14,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.libs.json.JsObject
 import play.modules.reactivemongo.json._
 import reactivemongo.api.ReadPreference
+import play.api.libs.iteratee.Enumerator
 
 trait CommonMongoTests extends Logging
     with MustThrownMatchers
@@ -53,9 +54,9 @@ trait CommonMongoTests extends Logging
     Await.result(qb.cursor[JsObject](ReadPreference.nearest).collect[List](upTo, stopOnErr), shortWait)
   }
 
-  def findCursorEnumerator(c: JSONCollection, thingToFind: JsObject, upTo: Int, stopOnErr: Boolean): List[JsObject] = {
+  def findCursorEnumerator(c: JSONCollection, thingToFind: JsObject, upTo: Int, stopOnErr: Boolean): Enumerator[JsObject] = {
     val qb = c.find(thingToFind)
-    Await.result(qb.cursor[JsObject](ReadPreference.nearest).collect[List](upTo, stopOnErr), shortWait)
+    qb.cursor[JsObject](ReadPreference.nearest).enumerate(upTo, stopOnErr)
   }
 
   def resultOf(op: => Future[WriteResult]): Boolean = {
