@@ -21,6 +21,8 @@ trait CommonMongoTests extends Logging
     with MongoTestFixtures {
   val shortWait = Duration(100L, "millis")
 
+  def waitFor[X](op: => Future[X]): X = Await.result(op, shortWait)
+
   protected class MockedCollectionScope extends Scope {
     val testSpec = new Specification with MongoMocks {
       val coll = mockedCollection("foo")
@@ -37,7 +39,7 @@ trait CommonMongoTests extends Logging
 
   def findOne(c: JSONCollection, thingToFind: JsObject): Option[JsObject] = {
     val qb = c.find(thingToFind)
-    Await.result(qb.one[JsObject], shortWait)
+    waitFor(qb.one[JsObject])
   }
 
   def findCursorHeadOption(c: JSONCollection, thingToFind: JsObject): Option[JsObject] = {
@@ -60,6 +62,6 @@ trait CommonMongoTests extends Logging
   }
 
   def resultOf(op: => Future[WriteResult]): Boolean = {
-    Await.result(op, shortWait).ok
+    waitFor(op).ok
   }
 }

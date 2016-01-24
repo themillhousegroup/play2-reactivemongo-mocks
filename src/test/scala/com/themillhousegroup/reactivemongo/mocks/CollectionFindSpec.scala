@@ -6,6 +6,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import play.modules.reactivemongo.json._
 
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests
+import play.api.libs.iteratee.Iteratee
 
 class CollectionFindSpec extends Specification with CommonMongoTests {
 
@@ -69,6 +70,18 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
 
       testSpec.givenMongoFindAnyReturns(c, returnValues)
       findCursorCollect(c, JsObject(Nil), 0, false) must beEqualTo(returnValues)
+    }
+  }
+
+  "find-any (cursor; enumerator) support" should {
+    "be able to mock the find-any call to return a collection via an Enumerator" in new MockedCollectionScope {
+      val returnValues = List(firstSingleFieldObject, secondSingleFieldObject)
+
+      testSpec.givenMongoFindAnyReturns(c, returnValues)
+      val e = findCursorEnumerator(c, JsObject(Nil), 2, false)
+
+      val headCollector = Iteratee.head[JsObject]
+      waitFor(e.run(headCollector)) must beEqualTo(returnValues.headOption)
     }
   }
 
