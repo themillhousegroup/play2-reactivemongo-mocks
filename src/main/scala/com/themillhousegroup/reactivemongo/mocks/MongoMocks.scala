@@ -24,6 +24,7 @@ trait MongoMocks extends Mockito with Logging
   this: org.specs2.mutable.Specification =>
 
   lazy val mockDatabaseName = "mockDB"
+
   val mockDB = mock[DefaultDB]
   mockDB.name answers { _ =>
     logger.debug(s"Returning mocked $mockDatabaseName DB")
@@ -50,6 +51,8 @@ trait MongoMocks extends Mockito with Logging
     mockCollection
   }
 
-  val mockReactiveMongoApi = mock[ReactiveMongoApi]
-  mockReactiveMongoApi.db returns mockDB
+  def mockReactiveMongoApi = {
+    val rma = mock[ReactiveMongoApi]
+    rma.db returns mockDB
+  }
 }

@@ -1,6 +1,6 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-import reactivemongo.api.{QueryOpts, Cursor, FailoverStrategy}
+import reactivemongo.api.{ QueryOpts, Cursor, FailoverStrategy }
 import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
 import scala.collection.generic.CanBuildFrom
@@ -53,8 +53,6 @@ trait CollectionFind extends MongoMockFacet {
     spiedQB.comment(anyString) answers returnSelf
     spiedQB.maxTimeMs(anyLong) answers returnSelf
   }
-
-
 
   private def setupOne[T[J] <: Traversable[J]](spiedQB: JSONQueryBuilder, throwableOrResults: Either[Throwable, T[JsObject]]) = {
     val futureResults = eitherToFutureResult(throwableOrResults)
@@ -110,8 +108,8 @@ trait CollectionFind extends MongoMockFacet {
     org.mockito.Mockito.doAnswer(cursorAnswer).when(spiedQB).cursor[JsObject](anyReadPreference, anyBoolean)(anyPackReads, anyEC, anyCursorProducer)
   }
 
-  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor:Cursor[JsObject], throwableOrResults: Either[Throwable, T[JsObject]]):Unit = {
-    val (enumerator:Enumerator[JsObject], bulkEnumerator:Enumerator[Iterator[JsObject]]) = if (throwableOrResults.isLeft) {
+  private def setupCursorEnumeratorMocks[T[J] <: Traversable[J]](mockCursor: Cursor[JsObject], throwableOrResults: Either[Throwable, T[JsObject]]): Unit = {
+    val (enumerator: Enumerator[JsObject], bulkEnumerator: Enumerator[Iterator[JsObject]]) = if (throwableOrResults.isLeft) {
       // TODO throw the throwable when the Enumerator is accessed:
       (mock[Enumerator[JsObject]], mock[Enumerator[Iterator[JsObject]]])
     } else {
@@ -128,7 +126,7 @@ trait CollectionFind extends MongoMockFacet {
     mockCursor.rawEnumerateResponses(anyInt)(anyEC) returns responseEnumerator
   }
 
-  private def eitherToFutureResult[T[J] <: Traversable[J]](throwableOrResults: Either[Throwable, T[JsObject]]):Future[T[JsObject]] = {
+  private def eitherToFutureResult[T[J] <: Traversable[J]](throwableOrResults: Either[Throwable, T[JsObject]]): Future[T[JsObject]] = {
     throwableOrResults.fold(t => Future.failed(t), coll => Future.successful(coll))
   }
 
