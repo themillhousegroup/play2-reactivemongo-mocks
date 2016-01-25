@@ -11,6 +11,7 @@ import com.themillhousegroup.reactivemongo.mocks.facets._
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
 import org.specs2.mock.Mockito
+import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -48,4 +49,7 @@ trait MongoMocks extends Mockito with Logging
 
     mockCollection
   }
+
+  val mockReactiveMongoApi = mock[ReactiveMongoApi]
+  mockReactiveMongoApi.db returns mockDB
 }
