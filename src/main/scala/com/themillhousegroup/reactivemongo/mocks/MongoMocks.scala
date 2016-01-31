@@ -7,6 +7,7 @@ import reactivemongo.api.collections.GenericQueryBuilder
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.FailoverStrategy
 import com.themillhousegroup.reactivemongo.mocks.facets._
+import org.specs2.specification.Scope
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
@@ -32,7 +33,7 @@ trait MongoMocks extends Mockito with Logging
   }
 
   /** Returns a mocked JSONCollection that can be used with the givenMongo... methods in MongoMocks */
-  def mockedCollection(name: String): JSONCollection = {
+  def mockedCollection(name: String)(implicit mockDB: DefaultDB): JSONCollection = {
     val mockCollection = mock[JSONCollection]
     mockDB
       .collection[JSONCollection](
@@ -54,5 +55,16 @@ trait MongoMocks extends Mockito with Logging
   def mockReactiveMongoApi = {
     val rma = mock[ReactiveMongoApi]
     rma.db returns mockDB
+  }
+
+  /**
+   * A specs2 Scope that contains and configures an
+   * independent ReactiveMongoApi instance, guaranteeing
+   * no possible interaction with other mocked instances
+   */
+  class MongoMockScope extends Scope {
+    val reactiveMongoApi = mock[ReactiveMongoApi]
+    implicit val scopedMockDB = mock[DefaultDB]
+    reactiveMongoApi.db returns scopedMockDB
   }
 }
