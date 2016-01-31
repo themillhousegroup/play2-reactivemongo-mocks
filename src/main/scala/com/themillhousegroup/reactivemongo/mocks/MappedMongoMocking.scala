@@ -25,7 +25,7 @@ trait MappedMongoMocking extends MongoMocks {
 
   val collectionsByName: Map[String, JSONCollection] = mockData.map {
     case (k, v) =>
-      k -> mockedCollection(k)
+      k -> mockedCollection(k)(this.mockDB)
   }.toMap
 
   mockData.foreach {

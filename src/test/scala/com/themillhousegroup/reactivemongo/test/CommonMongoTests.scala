@@ -25,7 +25,7 @@ trait CommonMongoTests extends Logging
 
   protected class MockedCollectionScope extends Scope {
     val testSpec = new Specification with MongoMocks {
-      val coll = mockedCollection("foo")
+      val coll = mockedCollection("foo")(this.mockDB)
     }
 
     val c = testSpec.coll

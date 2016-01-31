@@ -40,17 +40,17 @@ class MongoMocksDefaultDBSpec extends Specification with CommonMongoTests {
     val testSpec = new Specification with MongoMocks
 
     "Indicate in the name that the collection is a mock" in {
-      val myCollection = testSpec.mockedCollection("myCollection")
+      val myCollection = testSpec.mockedCollection("myCollection")(testSpec.mockDB)
       myCollection.name must beEqualTo("myCollection (mock)")
     }
 
     "Indicate in the full collection name that the collection is a mock" in {
-      val myCollection = testSpec.mockedCollection("myCollection")
+      val myCollection = testSpec.mockedCollection("myCollection")(testSpec.mockDB)
       myCollection.fullCollectionName must beEqualTo("mock.myCollection")
     }
 
     "Refer back to the mock DB" in {
-      val myCollection = testSpec.mockedCollection("myCollection")
+      val myCollection = testSpec.mockedCollection("myCollection")(testSpec.mockDB)
       myCollection.db must beEqualTo(testSpec.mockDB)
     }
   }
