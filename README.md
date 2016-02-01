@@ -49,6 +49,70 @@ If you are executing complex multi-Collection join-like queries, it may end up b
 
 #### Traditional Mock Definitions
 
+
+##### The code to be tested
+Let's say you have a simple `Controller` that uses ReactiveMongo just like in [their sample tutorial](http://reactivemongo.org/releases/0.11/documentation/tutorial/play2.html):
+
+```
+class PersonController @Inject() (val reactiveMongoApi: ReactiveMongoApi) 
+	extends Controller with MongoController with ReactiveMongoComponents {
+
+	def collection: JSONCollection = db.collection[JSONCollection]("persons")
+
+	def findByName(name: String) = Action.async {
+    val cursor: Cursor[JsObject] = collection.
+      find(Json.obj("name" -> name)).
+      sort(Json.obj("created" -> -1)).
+      cursor[JsObject]
+
+    val futurePersonsList: Future[List[JsObject]] = cursor.collect[List]()
+
+    val futurePersonsJsonArray: Future[JsArray] =
+      futurePersonsList.map { persons => Json.arr(persons) }
+
+    futurePersonsJsonArray.map { persons =>
+      Ok(persons)
+    }
+  }
+}
+```
+Great. You can run this against a real Mongo instance and it works fine. Now let's add some test coverage.
+
+##### Define a Spec
+Firstly, just mix in `MongoMocks` into our standard Specs2 specification:
+```
+import org.specs2.mutable.Specification
+import com.themillhousegroup.reactivemongo.mocks.MongoMocks
+
+class PersonControllerSpec extends Specification with MongoMocks {
+
+}
+
+```
+
+##### Defining global behaviour
+If you just want your mock persistence layer to always reply with meaningful results, use the `mockedCollection(name)` method together with one or more of the `givenMongo...` methods, like this:
+
+```
+class PersonControllerSpec extends Specification with MongoMocks {
+    val mockedPersons = mockedCollection("persons")(this.mockDB)
+    val people = List(
+      Json.obj("name" -> "Alice", "created" -> 123456789L),
+      Json.obj("name" -> "Bob", "created" -> 333333389L)
+    )
+    givenMongoCollectionFindAnyReturns(mockedPersons, people)
+
+		val testController = new PersonController
+		
+		"some test of person finding" in {
+			
+		} 
+}
+```  
+
+
+
+
 #### The ```Map``` Abstraction
 Mix in ```MappedMongoMocking``` and define ```mockData``` - a ```Map[String, Set[JsObject]``` i.e. mapping CollectionName to its contents. That's it! All of your Mongo ```find()``` operations will now work against this data. 
 
