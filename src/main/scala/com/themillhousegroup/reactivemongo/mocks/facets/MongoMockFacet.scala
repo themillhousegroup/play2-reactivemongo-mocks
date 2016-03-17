@@ -28,8 +28,6 @@ trait MongoMockFacet extends Mockito with Logging {
 
   // Useful additional matchers:
 
-  def anyBoolean = Matchers.anyBoolean
-
   def anyReadPreference = Matchers.any[ReadPreference]
 
   def anyWriteConcern = Matchers.any[WriteConcern]
