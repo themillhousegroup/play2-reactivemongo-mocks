@@ -20,14 +20,16 @@ trait CollectionRemove extends MongoMockFacet {
     // Nothing to mock an answer for - it's unchecked - but we record the remove to be useful
     targetCollection.uncheckedRemove(
       removeMatcher, anyBoolean)(
-        anyPackWrites, anyEC) answers { o =>
+        anyPackWrites, anyEC) answers { args =>
+          val o: JsObject = firstArg(args)
           uncheckedRemoves = uncheckedRemoves :+ o
           logger.debug(s"unchecked remove of $o, recorded for verification (${uncheckedRemoves.size})")
         }
 
     targetCollection.remove(
       removeMatcher, anyWriteConcern, anyBoolean)(
-        anyPackWrites, anyEC) answers { o =>
+        anyPackWrites, anyEC) answers { args =>
+          val o: JsObject = firstArg(args)
           logger.debug(s"Remove of object $o will be considered a ${bool2Success(ok)}")
           Future.successful(mockResult(ok))
         }
