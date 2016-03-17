@@ -1,8 +1,10 @@
 name := "play2-reactivemongo-mocks"
 
-val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.4")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
+val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.5")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
 val targetPlayReactiveMongoVersion = "0.11.9"
+
+val minimumSpecs2Version = "[3.6,)"
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
@@ -18,7 +20,8 @@ libraryDependencies ++= Seq(
     "org.reactivemongo"     %% "play2-reactivemongo"    % targetPlayReactiveMongoVersion,
     "com.typesafe.play"     %% "play"                   % "2.4.6"                           % "provided",
     "io.netty"              %  "netty"                  % "3.10.4.Final"                    % "provided",
-    "org.specs2"            %% "specs2"                 % "2.3.13"
+    "org.specs2"            %% "specs2-core"            % minimumSpecs2Version							% "provided",
+    "org.specs2"            %% "specs2-mock"            % minimumSpecs2Version							% "provided"
 )
 
 resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
