@@ -5,7 +5,6 @@ import com.themillhousegroup.reactivemongo.mocks.facets.Logging
 import reactivemongo.api.commands.WriteResult
 
 import scala.concurrent.{ Future, Await }
-import scala.concurrent.ExecutionContext.Implicits.global
 import org.specs2.matcher._
 import org.specs2.specification.Scope
 import org.specs2.mutable.Specification
@@ -19,6 +18,9 @@ import play.api.libs.iteratee.Enumerator
 trait CommonMongoTests extends Logging
     with MustThrownMatchers
     with MongoTestFixtures {
+
+  implicit val ec = scala.concurrent.ExecutionContext.Implicits.global
+
   val shortWait = Duration(100L, "millis")
 
   def waitFor[X](op: => Future[X]): X = Await.result(op, shortWait)
