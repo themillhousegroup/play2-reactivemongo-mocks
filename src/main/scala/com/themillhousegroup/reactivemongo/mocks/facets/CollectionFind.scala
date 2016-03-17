@@ -20,6 +20,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait CollectionFind extends MongoMockFacet {
 
+  /** Helper method; extracts the first arg from an `answers` param */
+  private def firstArg[T](args: Any): T = {
+    val objs = args.asInstanceOf[Array[Object]]
+    objs(0).asInstanceOf[T]
+  }
+
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
   private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
     findMatcher: => JsObject,
@@ -87,11 +93,10 @@ trait CollectionFind extends MongoMockFacet {
     mockCursor.collect[Traversable](
       anyInt, anyBoolean)(
         any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
-        anyEC) answers { upTo =>
+        anyEC) answers { args =>
 
-          futureResults.map { args =>
-            val size = upTo.asInstanceOf[Int]
-            val results = (args.asInstanceOf[Array[Object]](0)).asInstanceOf[Traversable[JsObject]]
+          val size: Int = firstArg(args)
+          futureResults.map { results =>
             val subList = if (size == 0) { results } else { results.take(size) }
             logger.debug(s"Returning ${subList} as the cursor collect")
             subList
@@ -143,8 +148,7 @@ trait CollectionFind extends MongoMockFacet {
     setupQueryBuilder(spiedQB)
 
     targetCollection.find(anyJs)(anyPackWrites) answers { args =>
-      val o = args.asInstanceOf[Array[Object]](0)
-      val criteria = o.asInstanceOf[JsObject]
+      val criteria: JsObject = firstArg(args)
       val filteredContents = dataSource.filter { row =>
         criteria.fields.forall {
           case (fieldName, fieldValue) =>
