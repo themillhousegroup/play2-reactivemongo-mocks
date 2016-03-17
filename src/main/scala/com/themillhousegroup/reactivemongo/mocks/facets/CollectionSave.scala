@@ -17,7 +17,8 @@ trait CollectionSave extends MongoMockFacet {
     saveMatcher: => JsObject,
     ok: Boolean) = {
 
-    targetCollection.save(saveMatcher)(anyEC) answers { o =>
+    targetCollection.save(saveMatcher)(anyEC) answers { args =>
+      val o: JsObject = firstArg(args)
       logger.debug(s"Save of object $o will be considered a ${bool2Success(ok)}")
       Future.successful(mockResult(ok))
     }
