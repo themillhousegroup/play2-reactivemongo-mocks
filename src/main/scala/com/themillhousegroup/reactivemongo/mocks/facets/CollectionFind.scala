@@ -89,8 +89,9 @@ trait CollectionFind extends MongoMockFacet {
         any[CanBuildFrom[Traversable[_], JsObject, Traversable[JsObject]]],
         anyEC) answers { upTo =>
 
-          futureResults.map { results =>
+          futureResults.map { args =>
             val size = upTo.asInstanceOf[Int]
+            val results = (args.asInstanceOf[Array[Object]](0)).asInstanceOf[Traversable[JsObject]]
             val subList = if (size == 0) { results } else { results.take(size) }
             logger.debug(s"Returning ${subList} as the cursor collect")
             subList
@@ -141,7 +142,8 @@ trait CollectionFind extends MongoMockFacet {
 
     setupQueryBuilder(spiedQB)
 
-    targetCollection.find(anyJs)(anyPackWrites) answers { o =>
+    targetCollection.find(anyJs)(anyPackWrites) answers { args =>
+      val o = args.asInstanceOf[Array[Object]](0)
       val criteria = o.asInstanceOf[JsObject]
       val filteredContents = dataSource.filter { row =>
         criteria.fields.forall {
