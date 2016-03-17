@@ -26,6 +26,12 @@ trait MongoMockFacet extends Mockito with Logging {
 
   protected def bool2Success(ok: Boolean) = if (ok) "success" else "failure"
 
+  /** Helper method; extracts the first arg from an `answers` param */
+  protected def firstArg[T](args: Any): T = {
+    val objs = args.asInstanceOf[Array[Object]]
+    objs(0).asInstanceOf[T]
+  }
+
   // Useful additional matchers:
 
   def anyReadPreference = Matchers.any[ReadPreference]

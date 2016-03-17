@@ -20,12 +20,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait CollectionFind extends MongoMockFacet {
 
-  /** Helper method; extracts the first arg from an `answers` param */
-  private def firstArg[T](args: Any): T = {
-    val objs = args.asInstanceOf[Array[Object]]
-    objs(0).asInstanceOf[T]
-  }
-
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
   private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
     findMatcher: => JsObject,
