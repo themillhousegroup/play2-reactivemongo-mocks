@@ -28,14 +28,17 @@ Bring in the library by adding the following to your Play project's ```build.sbt
 
 ```
    libraryDependencies ++= Seq(
-     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.9_0.4.26"
+     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.9_0.5.33"
    )
 
 ```
 
-The above version (the **0.4.x** family) is for **Play-ReactiveMongo 0.11.9** and **Play 2.4**. As Play 2.4 is for Scala 2.11, this library is correspondingly now **only for Scala 2.11**.
+The above version (the **0.5.x** family) is for **Play-ReactiveMongo 0.11.9** and **Play 2.4**. As Play 2.4 is for Scala 2.11, this library is correspondingly now **only for Scala 2.11**.
 
 ### Older Versions
+
+The **0.4.x** versions of this library incorrectly specified a very old version of the [Specs2](http://etorreborre.github.io/specs2/) library; this was reported in [Issue 2](https://github.com/themillhousegroup/play2-reactivemongo-mocks/issues/2) and resulted in the **0.5.x** line. _All **0.4.x** versions should be considered deprecated_; upgrading to **0.5.x** is painless and it is completely backwards-compatible.
+
 If you are using **Play 2.3**, you can still use the older published **0.3.x** versions of this library, which target **Play-ReactiveMongo 0.10.5.0.akka23**, in both Scala 2.10 and Scala 2.11 flavours. Substitute the following dependency:
 
 ```
