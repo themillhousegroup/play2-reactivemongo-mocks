@@ -12,6 +12,19 @@ class CollectionInsertSpec extends Specification with CommonMongoTests {
       resultOf(c.insert(firstSingleFieldObject)) should beTrue
     }
 
+    "Allow an insert with a custom Writer to be considered OK" in new MockedCollectionScope {
+
+      case class User(firstName: String, lastName: String)
+
+      import play.api.libs.json.Json
+      implicit val userFormat = Json.format[User]
+
+      val user = User("foo", "bar")
+
+      testSpec.givenAnyMongoInsertIsOK(c)
+      resultOf(c.insert(user)) should beTrue
+    }
+
     "Allow an unchecked insert and record it for verification" in new MockedCollectionScope {
       testSpec.givenAnyMongoInsertIsOK(c)
 
