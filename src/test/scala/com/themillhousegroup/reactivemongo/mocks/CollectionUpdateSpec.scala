@@ -12,6 +12,18 @@ class CollectionUpdateSpec extends Specification with CommonMongoTests {
       resultOf(c.update(firstSingleFieldObject, secondSingleFieldObject)) should beTrue
     }
 
+    "Allow an object update to be considered OK" in new MockedCollectionScope {
+      case class User(firstName: String, lastName: String)
+
+      import play.api.libs.json.Json
+      implicit val userFormat = Json.format[User]
+
+      val user = User("foo", "bar")
+
+      testSpec.givenAnyMongoUpdateIsOK(c)
+      resultOf(c.update(user, user)) should beTrue
+    }
+
     "Allow an unchecked update and record it for verification" in new MockedCollectionScope {
       testSpec.givenAnyMongoUpdateIsOK(c)
 

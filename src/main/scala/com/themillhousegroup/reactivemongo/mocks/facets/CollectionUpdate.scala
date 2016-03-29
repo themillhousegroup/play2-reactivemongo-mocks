@@ -10,7 +10,7 @@ trait CollectionUpdate extends MongoMockFacet {
 
   var uncheckedUpdates = Seq[Any]()
 
-  private def setupMongoUpdates(targetCollection: JSONCollection,
+  private def setupMongoUpdates[T](targetCollection: JSONCollection,
     selectorMatcher: => JsObject,
     updateMatcher: => JsObject,
     ok: Boolean) = {
@@ -19,7 +19,7 @@ trait CollectionUpdate extends MongoMockFacet {
     targetCollection.uncheckedUpdate(
       selectorMatcher, updateMatcher, anyBoolean, anyBoolean)(
         anyPackWrites, anyPackWrites) answers { args =>
-          val o: JsObject = firstArg(args)
+          val o: T = firstArg(args)
           uncheckedUpdates = uncheckedUpdates :+ o
           logger.debug(s"unchecked update of $o, recorded for verification (${uncheckedUpdates.size})")
         }
@@ -27,22 +27,22 @@ trait CollectionUpdate extends MongoMockFacet {
     targetCollection.update(
       selectorMatcher, updateMatcher, anyWriteConcern, anyBoolean, anyBoolean)(
         anyPackWrites, anyPackWrites, anyEC) answers { args =>
-          val o: JsObject = firstArg(args)
+          val o: T = firstArg(args)
           logger.debug(s"Update of object $o will be considered a ${bool2Success(ok)}")
           Future.successful(mockUpdateResult(ok))
         }
   }
 
-  def givenAnyMongoUpdateIsOK(targetCollection: JSONCollection, ok: Boolean = true) = {
-    setupMongoUpdates(
+  def givenAnyMongoUpdateIsOK[T](targetCollection: JSONCollection, ok: Boolean = true) = {
+    setupMongoUpdates[T](
       targetCollection,
       anyJs,
       anyJs,
       ok)
   }
 
-  def givenMongoUpdateIsOK(targetCollection: JSONCollection, selector: JsObject, ok: Boolean = true) = {
-    setupMongoUpdates(
+  def givenMongoUpdateIsOK[T](targetCollection: JSONCollection, selector: JsObject, ok: Boolean = true) = {
+    setupMongoUpdates[T](
       targetCollection,
       org.mockito.Matchers.eq(selector),
       anyJs,
