@@ -41,6 +41,31 @@ class CollectionFindSpec extends Specification with CommonMongoTests {
       testSpec.givenMongoFindAnyReturns(c, searchedOption)
       findOne(c, JsObject(Nil)) must beEqualTo(searchedOption)
     }
+
+    "be able to mock the count call to return one thing" in new MockedCollectionScope {
+
+      testSpec.givenMongoFindAnyReturnsSome(c, firstSingleFieldObject)
+      waitFor(c.count(Some(firstSingleFieldObject))) must beEqualTo(1)
+    }
+
+    "be able to mock the count call to return one thing when no criteria" in new MockedCollectionScope {
+
+      testSpec.givenMongoFindAnyReturnsSome(c, firstSingleFieldObject)
+      waitFor(c.count(None)) must beEqualTo(1)
+    }
+
+    "be able to mock the count call to return nothing" in new MockedCollectionScope {
+
+      testSpec.givenMongoFindAnyReturnsNone(c)
+      waitFor(c.count(Some(firstSingleFieldObject))) must beEqualTo(0)
+    }
+
+    "be able to mock the count call to return nothing with no criteria" in new MockedCollectionScope {
+
+      testSpec.givenMongoFindAnyReturnsNone(c)
+      waitFor(c.count()) must beEqualTo(0)
+    }
+
   }
 
   "find-any (cursor) support" should {

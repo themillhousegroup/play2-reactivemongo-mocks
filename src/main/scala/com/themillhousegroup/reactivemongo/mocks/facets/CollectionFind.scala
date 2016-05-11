@@ -11,6 +11,8 @@ import play.modules.reactivemongo.json.collection.JSONQueryBuilder
 import play.api.libs.json.JsObject
 import play.api.libs.iteratee.Enumerator
 import reactivemongo.core.protocol.Response
+import reactivemongo.api.collections.BatchCommands
+import reactivemongo.api.commands.CountCommand
 
 //// Reactive Mongo plugin
 import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
@@ -21,9 +23,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait CollectionFind extends MongoMockFacet {
 
   /* Requires the use of a Mockito spy, due to the Self-typing on sort(). */
-  private def givenMongoCollectionFindReturns[T[J] <: Traversable[J]](targetCollection: JSONCollection,
+  private def givenMongoCollectionFindReturns[T[J] <: Traversable[J], H](targetCollection: JSONCollection,
     findMatcher: => JsObject,
     results: T[JsObject]): JSONQueryBuilder = {
+
 
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
@@ -35,6 +38,13 @@ trait CollectionFind extends MongoMockFacet {
       logger.debug(s"Returning queryBuilder that returns $results in response to find request")
       spiedQB
     }
+
+
+    targetCollection.count[H](
+      Some(findMatcher), anyInt, anyInt, any[Option[H]])(
+      any[H => targetCollection.BatchCommands.CountCommand.Hint], anyEC
+    ) returns Future.successful(results.size)
+
     spiedQB
   }
 
@@ -140,6 +150,10 @@ trait CollectionFind extends MongoMockFacet {
     val spiedQB = spy(new JSONQueryBuilder(targetCollection, mock[FailoverStrategy]))
 
     setupQueryBuilder(spiedQB)
+
+//    targetCollection.count[H](Some(anyJs), anyInt, anyInt, any[Option[_]])(
+//      any[H => targetCollection.BatchCommands.CountCommand.Hint], anyEC
+//    ) returns Future.successful(dataSource.size)
 
     targetCollection.find(anyJs)(anyPackWrites) answers { args =>
       val criteria: JsObject = firstArg(args)
