@@ -1,10 +1,13 @@
 name := "play2-reactivemongo-mocks"
 
-val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.5")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
+val mocksVersion = s"${sys.props.getOrElse("build.majorMinor", "0.6")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
-val targetPlayReactiveMongoVersion = "0.11.9"
+val targetPlayReactiveMongoVersion = "0.11.11"
 
 val minimumSpecs2Version = "[3.6,)"
+
+val minimumPlayVersion = "[2.5.0,)"
+
 
 version := targetPlayReactiveMongoVersion + "_" + mocksVersion
 
@@ -18,8 +21,8 @@ libraryDependencies ++= Seq(
     "ch.qos.logback"        % "logback-classic"         % "1.1.3",
     "org.mockito"           %  "mockito-all"            % "1.10.19",
     "org.reactivemongo"     %% "play2-reactivemongo"    % targetPlayReactiveMongoVersion,
-    "com.typesafe.play"     %% "play"                   % "2.4.6"                           % "provided",
-    "io.netty"              %  "netty"                  % "3.10.4.Final"                    % "provided",
+    "com.typesafe.play"     %% "play"                   % minimumPlayVersion                            % "provided",
+  //  "io.netty"              %  "netty"                  % "4.0.36.Final"                                % "provided",
     "org.specs2"            %% "specs2-core"            % minimumSpecs2Version							% "provided",
     "org.specs2"            %% "specs2-mock"            % minimumSpecs2Version							% "provided"
 )
