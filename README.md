@@ -26,6 +26,8 @@ Bring in the library by adding the following to your Play project's ```build.sbt
 ```
   - The dependency itself: 
 
+##### Play 2.4.x:
+
 ```
    libraryDependencies ++= Seq(
      "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.9_0.5.35"
@@ -34,6 +36,17 @@ Bring in the library by adding the following to your Play project's ```build.sbt
 ```
 
 The above version (the **0.5.x** family) is for **Play-ReactiveMongo 0.11.9** and **Play 2.4**. As Play 2.4 is for Scala 2.11, this library is correspondingly now **only for Scala 2.11**.
+
+##### Play 2.5.x:
+
+```
+   libraryDependencies ++= Seq(
+     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.11_0.6.38"
+   )
+
+```
+The **0.6.x** family is required for Play 2.5.x support and moves the expected ReactiveMongo version to 0.11.11.
+
 
 ### Older Versions
 
