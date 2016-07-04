@@ -5,9 +5,8 @@ import org.mockito.stubbing.Answer
 import org.mockito.invocation.InvocationOnMock
 import scala.collection.generic.CanBuildFrom
 import org.mockito.Mockito._
-import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.play.json.collection.{JSONCollection, JSONQueryBuilder}
 import scala.Some
-import play.modules.reactivemongo.json.collection.JSONQueryBuilder
 import play.api.libs.json.JsObject
 import play.api.libs.iteratee.Enumerator
 import reactivemongo.core.protocol.Response
@@ -15,7 +14,6 @@ import reactivemongo.api.collections.BatchCommands
 import reactivemongo.api.commands.CountCommand
 
 //// Reactive Mongo plugin
-import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
 import play.api.libs.json._
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.ExecutionContext.Implicits.global

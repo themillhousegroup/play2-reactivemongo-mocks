@@ -8,9 +8,11 @@ import reactivemongo.api.DefaultDB
 import reactivemongo.api.FailoverStrategy
 import com.themillhousegroup.reactivemongo.mocks.facets._
 import org.specs2.specification.Scope
+import reactivemongo.play.json.collection.JSONCollection
 
 //// Reactive Mongo plugin
-import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
+import reactivemongo.play.json._
+
 import org.specs2.mock.Mockito
 import play.modules.reactivemongo.ReactiveMongoApi
 

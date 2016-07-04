@@ -3,7 +3,7 @@ package com.themillhousegroup.reactivemongo.mocks
 import org.specs2.mock.Mockito
 import reactivemongo.api.DefaultDB
 import play.api.libs.json.JsObject
-import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.play.json.collection.JSONCollection
 
 /**
  * Permits an entire MongoDB database to be mocked as if it

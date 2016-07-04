@@ -1,6 +1,6 @@
 package com.themillhousegroup.reactivemongo.mocks.facets
 
-import play.modules.reactivemongo.json.collection.{ JSONQueryBuilder, JSONCollection }
+import reactivemongo.play.json.collection.{ JSONCollection, JSONQueryBuilder }
 import org.specs2.mock.Mockito
 import reactivemongo.core.commands.LastError
 import scala.concurrent.{ ExecutionContext, Future }
