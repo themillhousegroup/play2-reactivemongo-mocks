@@ -16,7 +16,8 @@ import play.modules.reactivemongo.{ // ReactiveMongo Play2 plugin
   ReactiveMongoComponents
 }
 import reactivemongo.play.json._
-import play.modules.reactivemongo.json.collection._
+import reactivemongo.play.json.collection.{ JSONCollection, JSONQueryBuilder }
+
 import scala.concurrent.Future
 
 class TestController(val reactiveMongoApi: ReactiveMongoApi)

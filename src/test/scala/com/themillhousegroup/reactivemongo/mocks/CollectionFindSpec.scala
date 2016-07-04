@@ -2,7 +2,7 @@ package com.themillhousegroup.reactivemongo.mocks
 
 import org.specs2.mutable.Specification
 import play.api.libs.json.{ JsBoolean, JsString, JsObject }
-import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.play.json.collection.{ JSONCollection, JSONQueryBuilder }
 import play.modules.reactivemongo.json._
 
 import com.themillhousegroup.reactivemongo.test.CommonMongoTests

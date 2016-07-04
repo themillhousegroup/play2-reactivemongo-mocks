@@ -9,7 +9,7 @@ import org.specs2.matcher._
 import org.specs2.specification.Scope
 import org.specs2.mutable.Specification
 import com.themillhousegroup.reactivemongo.mocks.MongoMocks
-import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.play.json.collection.{ JSONCollection }
 import play.api.libs.json.JsObject
 import play.modules.reactivemongo.json._
 import reactivemongo.api.ReadPreference

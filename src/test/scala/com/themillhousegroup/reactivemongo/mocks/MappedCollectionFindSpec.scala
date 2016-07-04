@@ -8,7 +8,7 @@ import com.themillhousegroup.reactivemongo.test.CommonMongoTests
 import org.specs2.specification.Scope
 
 // Get implicit conversions into scope
-import play.modules.reactivemongo.json.collection._
+import reactivemongo.play.json.collection.{ JSONCollection, JSONQueryBuilder }
 
 class MappedCollectionFindSpec extends Specification with CommonMongoTests {
 
