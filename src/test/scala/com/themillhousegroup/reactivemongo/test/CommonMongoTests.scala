@@ -66,4 +66,8 @@ trait CommonMongoTests extends Logging
   def resultOf(op: => Future[WriteResult]): Boolean = {
     waitFor(op).ok
   }
+
+  def nOf(op: => Future[WriteResult]): Int = {
+    waitFor(op).n
+  }
 }

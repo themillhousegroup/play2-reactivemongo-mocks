@@ -12,9 +12,11 @@ import org.mockito.Matchers
 
 trait MongoMockFacet extends Mockito with Logging {
 
-  protected def mockResult(ok: Boolean): WriteResult = {
+  protected def mockResult(ok: Boolean, maybeN: Option[Int] = None, maybeCode: Option[Int] = None): WriteResult = {
     val mockResult = mock[WriteResult]
     mockResult.ok returns ok
+    mockResult.n returns maybeN.getOrElse(1)
+    mockResult.code returns maybeCode
     mockResult
   }
 

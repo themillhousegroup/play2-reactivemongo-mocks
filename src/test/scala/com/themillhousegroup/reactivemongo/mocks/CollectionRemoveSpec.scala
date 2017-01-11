@@ -31,5 +31,17 @@ class CollectionRemoveSpec extends Specification with CommonMongoTests {
       resultOf(c.remove(secondSingleFieldObject)) should beFalse
       resultOf(c.remove(thirdSingleFieldObject)) should beTrue
     }
+
+    "Allow the number of affected documents to be specified" in new MockedCollectionScope {
+      testSpec.givenMongoRemoveIsOKAndAffectsNDocuments(c, firstSingleFieldObject, true, 3)
+
+      nOf(c.remove(firstSingleFieldObject)) should beEqualTo(3)
+    }
+
+    "Default the number of affected documents to 1" in new MockedCollectionScope {
+      testSpec.givenMongoRemoveIsOKAndAffectsNDocuments(c, firstSingleFieldObject)
+
+      nOf(c.remove(firstSingleFieldObject)) should beEqualTo(1)
+    }
   }
 }

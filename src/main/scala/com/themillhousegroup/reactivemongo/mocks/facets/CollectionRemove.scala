@@ -15,7 +15,9 @@ trait CollectionRemove extends MongoMockFacet {
 
   private def setupMongoRemoves(targetCollection: JSONCollection,
     removeMatcher: => JsObject,
-    ok: Boolean) = {
+    ok: Boolean,
+    maybeN: Option[Int],
+    maybeCode: Option[Int]) = {
 
     // Nothing to mock an answer for - it's unchecked - but we record the remove to be useful
     targetCollection.uncheckedRemove(
@@ -31,15 +33,23 @@ trait CollectionRemove extends MongoMockFacet {
         anyPackWrites, anyEC) answers { args =>
           val o: JsObject = firstArg(args)
           logger.debug(s"Remove of object $o will be considered a ${bool2Success(ok)}")
-          Future.successful(mockResult(ok))
+          Future.successful(mockResult(ok, maybeN, maybeCode))
         }
   }
 
   def givenAnyMongoRemoveIsOK(targetCollection: JSONCollection, ok: Boolean = true) = {
-    setupMongoRemoves(targetCollection, anyJs, ok)
+    setupMongoRemoves(targetCollection, anyJs, ok, None, None)
   }
 
   def givenMongoRemoveIsOK(targetCollection: JSONCollection, removeQuery: JsObject, ok: Boolean = true) = {
-    setupMongoRemoves(targetCollection, org.mockito.Matchers.eq(removeQuery), ok)
+    setupMongoRemoves(targetCollection, org.mockito.Matchers.eq(removeQuery), ok, None, None)
+  }
+
+  def givenAnyMongoRemoveIsOKAndAffectsNDocuments(targetCollection: JSONCollection, ok: Boolean = true, n: Int = 1) = {
+    setupMongoRemoves(targetCollection, anyJs, ok, Some(n), None)
+  }
+
+  def givenMongoRemoveIsOKAndAffectsNDocuments(targetCollection: JSONCollection, removeQuery: JsObject, ok: Boolean = true, n: Int = 1) = {
+    setupMongoRemoves(targetCollection, org.mockito.Matchers.eq(removeQuery), ok, Some(n), None)
   }
 }
