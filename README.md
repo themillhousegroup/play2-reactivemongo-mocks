@@ -41,11 +41,11 @@ The above version (the **0.5.x** family) is for **Play-ReactiveMongo 0.11.9** an
 
 ```
    libraryDependencies ++= Seq(
-     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.11_0.6.38"
+     "com.themillhousegroup" %% "play2-reactivemongo-mocks" % "0.11.11_0.7.42"
    )
 
 ```
-The **0.6.x** family is required for Play 2.5.x support and moves the expected ReactiveMongo version to 0.11.11.
+The **0.6.x** family was required for Play 2.5.x support and moves the expected ReactiveMongo version to 0.11.11. The **0.7.x** family fixes deprecation warnings in the underlying ReactiveMongo library.
 
 
 ### Older Versions
